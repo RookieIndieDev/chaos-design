@@ -1,0 +1,879 @@
+{
+  "neurons": [
+    {
+      "$TYPE": "TCPosIsRelativeInput",
+      "$EVAL_GROUP": "TARGET",
+      "attributeId": "BLOCK_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:bedrock",
+      "pos": {
+        "X": 0,
+        "Y": 0,
+        "Z": 1
+      },
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-0"
+    },
+    {
+      "$TYPE": "TargetCandidateSetScoreOutput",
+      "$EVAL_GROUP": "TARGET",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_3",
+      "dependencies": [
+        {
+          "neuronId": "neuron-0",
+          "weight": -0.22999999999999998,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-25",
+          "weight": -3.02,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-35",
+          "weight": -1.19,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-1"
+    },
+    {
+      "$TYPE": "TCPosIsRelativeInput",
+      "$EVAL_GROUP": "TARGET",
+      "attributeId": "BLOCK_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:oak_planks",
+      "pos": {
+        "X": 1,
+        "Y": 0,
+        "Z": 0
+      },
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-2"
+    },
+    {
+      "$TYPE": "ICSetScoreOutput",
+      "$EVAL_GROUP": "ITEM",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_3",
+      "dependencies": [
+        {
+          "neuronId": "neuron-2",
+          "weight": -0.37,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-13",
+          "weight": -0.59,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-37",
+          "weight": 1.88,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-3"
+    },
+    {
+      "$TYPE": "RCIsTypeInput",
+      "$EVAL_GROUP": "ITEM",
+      "attributeId": "RECIPE_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:bowl",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-4"
+    },
+    {
+      "$TYPE": "ICSetScoreOutput",
+      "$EVAL_GROUP": "ITEM",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_1",
+      "dependencies": [
+        {
+          "neuronId": "neuron-4",
+          "weight": -0.57,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-5"
+    },
+    {
+      "$TYPE": "ICIsTypeInput",
+      "$EVAL_GROUP": "ITEM",
+      "attributeId": "ITEM_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:oak_planks",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-6"
+    },
+    {
+      "$DEFAULT": "true",
+      "$TYPE": "StopScanOutput",
+      "$EVAL_GROUP": "TARGET",
+      "_base_type": "output",
+      "dependencies": [
+        {
+          "neuronId": "neuron-6",
+          "weight": -2.57,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-7"
+    },
+    {
+      "$TYPE": "TCPosIsRelativeInput",
+      "$EVAL_GROUP": "TARGET",
+      "attributeId": "OWNER_ENTITY",
+      "attributeValue": "me",
+      "_base_type": "input",
+      "pos": {
+        "X": -1,
+        "Y": -1,
+        "Z": -1
+      },
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-8"
+    },
+    {
+      "$TYPE": "ICSetScoreOutput",
+      "$EVAL_GROUP": "ITEM",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_5",
+      "dependencies": [
+        {
+          "neuronId": "neuron-8",
+          "weight": -0.88,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-9"
+    },
+    {
+      "$TYPE": "IsLookingAtInput",
+      "attributeId": "BLOCK_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:oak_planks",
+      "eye": "Eye_5",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-10"
+    },
+    {
+      "$TYPE": "TargetCandidateSetScoreOutput",
+      "$EVAL_GROUP": "TARGET",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_5",
+      "dependencies": [
+        {
+          "neuronId": "neuron-10",
+          "weight": 2.97,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-12",
+          "weight": -1.7,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-21",
+          "weight": 2.33,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-11"
+    },
+    {
+      "$TYPE": "TCPosIsRelativeInput",
+      "$EVAL_GROUP": "TARGET",
+      "attributeId": "BLOCK_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:oak_planks",
+      "pos": {
+        "X": -1,
+        "Y": 1,
+        "Z": 0
+      },
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-12"
+    },
+    {
+      "$TYPE": "TCPosIsRelativeInput",
+      "$EVAL_GROUP": "TARGET",
+      "attributeId": "OWNER_ENTITY",
+      "attributeValue": "me",
+      "_base_type": "input",
+      "pos": {
+        "X": 0,
+        "Y": 0,
+        "Z": 1
+      },
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-13"
+    },
+    {
+      "$TYPE": "TargetCandidateSetScoreOutput",
+      "$EVAL_GROUP": "TARGET",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_4",
+      "dependencies": [
+        {
+          "neuronId": "neuron-13",
+          "weight": -0.65,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-39",
+          "weight": -2.73,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-36",
+          "weight": 0.93,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-14"
+    },
+    {
+      "$TYPE": "IsLookingAtInput",
+      "attributeId": "ENTITY_ID",
+      "_base_type": "input",
+      "attributeValue": "chaoscraft:org_entity",
+      "eye": "Eye_3",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-15"
+    },
+    {
+      "$TYPE": "TargetCandidateSetScoreOutput",
+      "$EVAL_GROUP": "TARGET",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_2",
+      "dependencies": [
+        {
+          "neuronId": "neuron-15",
+          "weight": 0.2,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-24",
+          "weight": -0.25,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-38",
+          "weight": -2.3,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-31",
+          "weight": 2.82,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-16"
+    },
+    {
+      "$TYPE": "IsLookingAtInput",
+      "attributeId": "ENTITY_ID",
+      "_base_type": "input",
+      "attributeValue": "chaoscraft:org_entity",
+      "eye": "Eye_2",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-17"
+    },
+    {
+      "$TYPE": "ICSetScoreOutput",
+      "$EVAL_GROUP": "ITEM",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_0",
+      "dependencies": [
+        {
+          "neuronId": "neuron-17",
+          "weight": -0.63,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-32",
+          "weight": 2.31,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-18"
+    },
+    {
+      "$TYPE": "TargetCandidateTypeInput",
+      "$EVAL_GROUP": "TARGET",
+      "$DEFAULT": true,
+      "attributeId": "OWNER_ENTITY",
+      "attributeValue": "me",
+      "_base_type": "input",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-19"
+    },
+    {
+      "$TYPE": "TargetCandidateSetScoreOutput",
+      "$EVAL_GROUP": "TARGET",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_0",
+      "dependencies": [
+        {
+          "neuronId": "neuron-19",
+          "weight": -0.16,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-20"
+    },
+    {
+      "$TYPE": "IsLookingAtInput",
+      "attributeId": "BLOCK_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:oak_planks",
+      "eye": "Eye_3",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-21"
+    },
+    {
+      "$TYPE": "TCPosIsRelativeInput",
+      "$EVAL_GROUP": "TARGET",
+      "attributeId": "OWNER_ENTITY",
+      "attributeValue": "me",
+      "_base_type": "input",
+      "pos": {
+        "X": 0,
+        "Y": 1,
+        "Z": -1
+      },
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-22"
+    },
+    {
+      "$TYPE": "TargetCandidateSetScoreOutput",
+      "$EVAL_GROUP": "TARGET",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "ActionTargetSlot_1",
+      "dependencies": [
+        {
+          "neuronId": "neuron-22",
+          "weight": 0.06,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-23"
+    },
+    {
+      "$TYPE": "IsLookingAtInput",
+      "attributeId": "ENTITY_ID",
+      "_base_type": "input",
+      "attributeValue": "chaoscraft:org_entity",
+      "eye": "Eye_9",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-24"
+    },
+    {
+      "$TYPE": "TCPosIsRelativeInput",
+      "$EVAL_GROUP": "TARGET",
+      "attributeId": "BLOCK_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:oak_planks",
+      "pos": {
+        "X": 0,
+        "Y": -1,
+        "Z": 1
+      },
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-25"
+    },
+    {
+      "$TYPE": "ICIsTypeInput",
+      "$EVAL_GROUP": "ITEM",
+      "attributeId": "ITEM_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:air",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-26"
+    },
+    {
+      "$TYPE": "TargetCandidateSetScoreOutput",
+      "$EVAL_GROUP": "TARGET",
+      "$DEFAULT": "true",
+      "_base_type": "output",
+      "targetSlotId": "TargetSlot_0",
+      "dependencies": [
+        {
+          "neuronId": "neuron-26",
+          "weight": -2.09,
+          "_originNaturalGen": 0,
+          "_originGen": 0
+        },
+        {
+          "neuronId": "neuron-28",
+          "weight": -0.17,
+          "_originNaturalGen": 0,
+          "_originGen": 0,
+          "enabled": false
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-27"
+    },
+    {
+      "$TYPE": "WorldDayTimeInput",
+      "$DEFAULT": "true",
+      "_base_type": "input",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-28"
+    },
+    {
+      "$TYPE": "TCPosIsRelativeInput",
+      "$EVAL_GROUP": "TARGET",
+      "attributeId": "BLOCK_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:oak_door",
+      "pos": {
+        "X": -1,
+        "Y": -1,
+        "Z": 1
+      },
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-29"
+    },
+    {
+      "$TYPE": "IsLookingAtInput",
+      "attributeId": "ENTITY_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:item",
+      "eye": "Eye_5",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-30"
+    },
+    {
+      "$TYPE": "IsLookingAtInput",
+      "attributeId": "ENTITY_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:item",
+      "eye": "Eye_9",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-31"
+    },
+    {
+      "$TYPE": "IsLookingAtInput",
+      "attributeId": "ENTITY_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:player",
+      "eye": "Eye_6",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-32"
+    },
+    {
+      "$TYPE": "RCIsTypeInput",
+      "$EVAL_GROUP": "ITEM",
+      "attributeId": "RECIPE_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:chest",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-33"
+    },
+    {
+      "$TYPE": "TCPosIsRelativeInput",
+      "$EVAL_GROUP": "TARGET",
+      "attributeId": "BLOCK_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:oak_planks",
+      "pos": {
+        "X": -1,
+        "Y": -1,
+        "Z": -1
+      },
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 0,
+      "_originGen": 0,
+      "id": "neuron-34"
+    },
+    {
+      "$TYPE": "MiddleNeuron",
+      "_base_type": "middle",
+      "dependencies": [
+        {
+          "neuronId": "neuron-30",
+          "weight": -1.19,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        },
+        {
+          "neuronId": "neuron-31",
+          "weight": 0.23,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 1,
+      "_originGen": 3,
+      "activator": "Gaussian",
+      "id": "neuron-35"
+    },
+    {
+      "$TYPE": "IsLookingAtInput",
+      "attributeId": "ENTITY_ID",
+      "_base_type": "input",
+      "attributeValue": "minecraft:player",
+      "eye": "Eye_5",
+      "dependencies": [],
+      "_uniqueString": null,
+      "_originNaturalGen": 1,
+      "_originGen": 3,
+      "id": "neuron-36"
+    },
+    {
+      "$TYPE": "MiddleNeuron",
+      "_base_type": "middle",
+      "dependencies": [
+        {
+          "neuronId": "neuron-40",
+          "weight": 2.09,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        },
+        {
+          "neuronId": "neuron-32",
+          "weight": 1.43,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 1,
+      "_originGen": 3,
+      "activator": "BinaryStep",
+      "id": "neuron-37"
+    },
+    {
+      "$TYPE": "MiddleNeuron",
+      "_base_type": "middle",
+      "dependencies": [
+        {
+          "neuronId": "neuron-29",
+          "weight": -2.3,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        },
+        {
+          "neuronId": "neuron-31",
+          "weight": -1.61,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 1,
+      "_originGen": 3,
+      "activator": "Relu",
+      "id": "neuron-38"
+    },
+    {
+      "$TYPE": "MiddleNeuron",
+      "_base_type": "middle",
+      "dependencies": [
+        {
+          "neuronId": "neuron-33",
+          "weight": -2.73,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        },
+        {
+          "neuronId": "neuron-29",
+          "weight": 0.83,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 1,
+      "_originGen": 3,
+      "activator": "Relu",
+      "id": "neuron-39"
+    },
+    {
+      "$TYPE": "MiddleNeuron",
+      "_base_type": "middle",
+      "dependencies": [
+        {
+          "neuronId": "neuron-34",
+          "weight": 2.09,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        },
+        {
+          "neuronId": "neuron-29",
+          "weight": 0.24,
+          "_originNaturalGen": 1,
+          "_originGen": 3
+        }
+      ],
+      "_uniqueString": null,
+      "_originNaturalGen": 1,
+      "_originGen": 3,
+      "activator": "Gaussian",
+      "id": "neuron-40"
+    }
+  ],
+  "biology": [
+    {
+      "pitch": "-12",
+      "yaw": "-75",
+      "maxDistance": "6",
+      "$BT": "Eye",
+      "index": 0,
+      "id": "Eye_0"
+    },
+    {
+      "pitch": "-14",
+      "yaw": "-43",
+      "maxDistance": "8",
+      "$BT": "Eye",
+      "index": 1,
+      "id": "Eye_1"
+    },
+    {
+      "pitch": "-29",
+      "yaw": "-3",
+      "maxDistance": "5",
+      "$BT": "Eye",
+      "index": 2,
+      "id": "Eye_2"
+    },
+    {
+      "pitch": "16",
+      "yaw": "20",
+      "maxDistance": "9",
+      "$BT": "Eye",
+      "index": 3,
+      "id": "Eye_3"
+    },
+    {
+      "pitch": "-31",
+      "yaw": "-53",
+      "maxDistance": "5",
+      "$BT": "Eye",
+      "index": 4,
+      "id": "Eye_4"
+    },
+    {
+      "pitch": "22",
+      "yaw": "55",
+      "maxDistance": "8",
+      "$BT": "Eye",
+      "index": 5,
+      "id": "Eye_5"
+    },
+    {
+      "pitch": "-7",
+      "yaw": "9",
+      "maxDistance": "3",
+      "$BT": "Eye",
+      "index": 6,
+      "id": "Eye_6"
+    },
+    {
+      "pitch": "39",
+      "yaw": "-86",
+      "maxDistance": "5",
+      "$BT": "Eye",
+      "index": 7,
+      "id": "Eye_7"
+    },
+    {
+      "pitch": "10",
+      "yaw": "80",
+      "maxDistance": "2",
+      "$BT": "Eye",
+      "index": 8,
+      "id": "Eye_8"
+    },
+    {
+      "pitch": "-21",
+      "yaw": "51",
+      "maxDistance": "3",
+      "$BT": "Eye",
+      "index": 9,
+      "id": "Eye_9"
+    },
+    {
+      "$BT": "TargetSlot",
+      "index": 0,
+      "id": "TargetSlot_0"
+    },
+    {
+      "$BT": "TargetSlot",
+      "index": 1,
+      "id": "TargetSlot_1"
+    },
+    {
+      "$BT": "ActionTargetSlot",
+      "action": "CraftAction",
+      "id": "ActionTargetSlot_0"
+    },
+    {
+      "$BT": "ActionTargetSlot",
+      "action": "DigBlockAction",
+      "id": "ActionTargetSlot_1"
+    },
+    {
+      "$BT": "ActionTargetSlot",
+      "action": "MeleeAttackAction",
+      "id": "ActionTargetSlot_2"
+    },
+    {
+      "$BT": "ActionTargetSlot",
+      "action": "PlaceBlockAction",
+      "id": "ActionTargetSlot_3"
+    },
+    {
+      "$BT": "ActionTargetSlot",
+      "action": "TossItemAction",
+      "id": "ActionTargetSlot_4"
+    },
+    {
+      "$BT": "ActionTargetSlot",
+      "action": "UseItemAction",
+      "id": "ActionTargetSlot_5"
+    }
+  ]
+}

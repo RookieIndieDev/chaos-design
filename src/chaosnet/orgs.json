@@ -1,0 +1,504 @@
+{
+  "organisms": [
+    {
+      "trainingRoomNamespace": "terraria",
+      "namespace": "species-coldembraceofdeath-goat-vk3s-0-chaya-P096",
+      "name": "chaya",
+      "generation": 0,
+      "naturalGeneration": 0,
+      "owner_username": "coldembraceofdeath",
+      "speciesNamespace": "species-coldembraceofdeath-goat-vk3s",
+      "nNet": {
+        "neurons": [
+          {
+            "$TYPE": "BiasInput",
+            "$DEFAULT": true,
+            "weight": "-3.5111260555758728",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BiasInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-0"
+          },
+          {
+            "$TYPE": "MoveLeft",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-0",
+                "weight": 1.15,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-0",
+                "weight": -1.12,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveLeft}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-1"
+          },
+          {
+            "$TYPE": "BlockInput",
+            "$DEFAULT": "true",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BlockInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-2"
+          },
+          {
+            "$TYPE": "MoveRight",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-2",
+                "weight": 2.8,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-2",
+                "weight": -0.57,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveRight}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-3"
+          }
+        ],
+        "biology": []
+      },
+      "score": 0,
+      "ttl": 1595576927.346,
+      "state": "Sent",
+      "trainingRoomRoleNamespace": "default"
+    },
+    {
+      "trainingRoomNamespace": "terraria",
+      "namespace": "species-coldembraceofdeath-bass-yxyn-0-sheena-VTq3",
+      "name": "sheena",
+      "generation": 0,
+      "naturalGeneration": 0,
+      "owner_username": "coldembraceofdeath",
+      "speciesNamespace": "species-coldembraceofdeath-bass-yxyn",
+      "nNet": {
+        "neurons": [
+          {
+            "$TYPE": "BiasInput",
+            "$DEFAULT": true,
+            "weight": "-3.5111260555758728",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BiasInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-0"
+          },
+          {
+            "$TYPE": "MoveRight",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-0",
+                "weight": 1.02,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-0",
+                "weight": 0.51,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveRight}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-1"
+          },
+          {
+            "$TYPE": "BlockInput",
+            "$DEFAULT": "true",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BlockInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-2"
+          },
+          {
+            "$TYPE": "MoveLeft",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-2",
+                "weight": 0.07,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-0",
+                "weight": -1.5,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveLeft}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-3"
+          }
+        ],
+        "biology": []
+      },
+      "score": 0,
+      "ttl": 1595576927.381,
+      "state": "Sent",
+      "trainingRoomRoleNamespace": "default"
+    },
+    {
+      "trainingRoomNamespace": "terraria",
+      "namespace": "species-coldembraceofdeath-list-qasr-0-verlie-QJDa",
+      "name": "verlie",
+      "generation": 0,
+      "naturalGeneration": 0,
+      "owner_username": "coldembraceofdeath",
+      "speciesNamespace": "species-coldembraceofdeath-list-qasr",
+      "nNet": {
+        "neurons": [
+          {
+            "$TYPE": "BiasInput",
+            "$DEFAULT": true,
+            "weight": "-3.5111260555758728",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BiasInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-0"
+          },
+          {
+            "$TYPE": "MoveRight",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-0",
+                "weight": -1.98,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-3",
+                "weight": -0.79,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-0",
+                "weight": -2.84,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-3",
+                "weight": -1.62,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-3",
+                "weight": 0.25,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveRight}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-1"
+          },
+          {
+            "$TYPE": "MoveLeft",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-0",
+                "weight": -0.57,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-0",
+                "weight": 2.97,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-3",
+                "weight": 1.9,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveLeft}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-2"
+          },
+          {
+            "$TYPE": "BlockInput",
+            "$DEFAULT": "true",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BlockInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-3"
+          }
+        ],
+        "biology": []
+      },
+      "score": 0,
+      "ttl": 1595576927.382,
+      "state": "Sent",
+      "trainingRoomRoleNamespace": "default"
+    },
+    {
+      "trainingRoomNamespace": "terraria",
+      "namespace": "species-coldembraceofdeath-mandrill-lrn9-0-troy-wEVL",
+      "name": "troy",
+      "generation": 0,
+      "naturalGeneration": 0,
+      "owner_username": "coldembraceofdeath",
+      "speciesNamespace": "species-coldembraceofdeath-mandrill-lrn9",
+      "nNet": {
+        "neurons": [
+          {
+            "$TYPE": "BlockInput",
+            "$DEFAULT": "true",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BlockInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-0"
+          },
+          {
+            "$TYPE": "MoveRight",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-0",
+                "weight": 0.26,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-0",
+                "weight": 2.85,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-0",
+                "weight": 2.81,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-0",
+                "weight": -0.23,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveRight}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-1"
+          },
+          {
+            "$TYPE": "BiasInput",
+            "$DEFAULT": true,
+            "weight": "-3.5111260555758728",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BiasInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-2"
+          },
+          {
+            "$TYPE": "MoveLeft",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-2",
+                "weight": -0.07,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveLeft}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-3"
+          }
+        ],
+        "biology": []
+      },
+      "score": 0,
+      "ttl": 1595576927.383,
+      "state": "Sent",
+      "trainingRoomRoleNamespace": "default"
+    },
+    {
+      "trainingRoomNamespace": "terraria",
+      "namespace": "species-coldembraceofdeath-mandrill-lrn9-0-cherly-VzlV",
+      "name": "cherly",
+      "generation": 0,
+      "naturalGeneration": 0,
+      "owner_username": "coldembraceofdeath",
+      "speciesNamespace": "species-coldembraceofdeath-mandrill-lrn9",
+      "nNet": {
+        "neurons": [
+          {
+            "$TYPE": "BiasInput",
+            "$DEFAULT": true,
+            "weight": "-3.5111260555758728",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BiasInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-0"
+          },
+          {
+            "$TYPE": "MoveLeft",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-0",
+                "weight": -0.41,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-0",
+                "weight": -2.75,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-3",
+                "weight": 2.77,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              },
+              {
+                "neuronId": "neuron-3",
+                "weight": 1.37,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveLeft}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-1"
+          },
+          {
+            "$TYPE": "MoveRight",
+            "$DEFAULT": "true",
+            "$OUTPUT_GROUP": "BASIC",
+            "_base_type": "output",
+            "dependencies": [
+              {
+                "neuronId": "neuron-0",
+                "weight": 2.82,
+                "_originNaturalGen": 0,
+                "_originGen": 0
+              }
+            ],
+            "_uniqueString": "{$TYPE:MoveRight}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-2"
+          },
+          {
+            "$TYPE": "BlockInput",
+            "$DEFAULT": "true",
+            "_base_type": "input",
+            "dependencies": [],
+            "_uniqueString": "{$TYPE:BlockInput}",
+            "_originNaturalGen": 0,
+            "_originGen": 0,
+            "id": "neuron-3"
+          }
+        ],
+        "biology": []
+      },
+      "score": 0,
+      "ttl": 1595576927.384,
+      "state": "Sent",
+      "trainingRoomRoleNamespace": "default"
+    }
+  ],
+  "stats": {
+    "speciesCreated": 0,
+    "totalOrgsPerGen": 50,
+    "orgsSpawnedSoFar": 5,
+    "orgsReportedSoFar": 0,
+    "orgsSpawned": 0,
+    "orgsLeftToReport": 50,
+    "genProgress": 0
+  },
+  "debug": {},
+  "session": {
+    "organisms": [
+      "species-coldembraceofdeath-goat-vk3s-0-chaya-P096",
+      "species-coldembraceofdeath-bass-yxyn-0-sheena-VTq3",
+      "species-coldembraceofdeath-list-qasr-0-verlie-QJDa",
+      "species-coldembraceofdeath-mandrill-lrn9-0-troy-wEVL",
+      "species-coldembraceofdeath-mandrill-lrn9-0-cherly-VzlV"
+    ],
+    "lastUpdateDate": "2020-07-17T08:00:17.896Z",
+    "state": "InActive",
+    "_id": "5f058de57908300008a0953a",
+    "trainingRoomNamespace": "terraria",
+    "trainingRoomUsername": "coldembraceofdeath",
+    "trainingRoomId": "5f032530f43a22000878b9fa",
+    "namespace": "xgirCW0rN8GnS6qsp0lqeET6hCYGvRa9",
+    "owner_username": "coldembraceofdeath",
+    "settings": [],
+    "__v": 7
+  }
+}
