@@ -101,14 +101,15 @@ class SidePane extends React.Component
 			if(!this.state.isSearching)
 			{
 				content = 
-				<div className="overflow-y-scroll overflow-x-visible h-screen py-2">
-					<Accordion text="Inputs" onNeuronSelect={this.props.onNeuronSelect} array={this.props.inputNeurons} currentNeuronId={this.props.currentNeuronId} 
-					onSelect={this.props.onAccordionSelect} baseType="input"/>
-					<Accordion text="Middle" onNeuronSelect={this.props.onNeuronSelect} array={this.props.activators} currentNeuronId={this.props.currentNeuronId} 
-					onSelect={this.props.onAccordionSelect} baseType="middle"/>
-					<Accordion text="Outputs" onNeuronSelect={this.props.onNeuronSelect} array={this.props.outputNeurons} currentNeuronId={this.props.currentNeuronId}
-					 onSelect={this.props.onAccordionSelect} baseType="output"/>
-				</div>
+					<div className="overflow-y-scroll overflow-x-visible h-screen py-2">
+						<Accordion text="Inputs" onNeuronSelect={this.props.onNeuronSelect} array={this.props.inputNeurons} currentNeuronId={this.props.currentNeuronId} 
+						onSelect={this.props.onAccordionSelect} baseType="input"/>
+						<Accordion text="Middle" onNeuronSelect={this.props.onNeuronSelect} array={this.props.activators} currentNeuronId={this.props.currentNeuronId} 
+						onSelect={this.props.onAccordionSelect} baseType="middle"/>
+						<Accordion text="Outputs" onNeuronSelect={this.props.onNeuronSelect} array={this.props.outputNeurons} currentNeuronId={this.props.currentNeuronId}
+						 onSelect={this.props.onAccordionSelect} baseType="output"/>
+					</div>
+
 			}
 			else{
 				content=
