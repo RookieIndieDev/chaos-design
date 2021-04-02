@@ -13,7 +13,6 @@ class NeuralLayer extends React.Component
 	}
 
 	onLayerClick(e){
-
 		if(this.props.baseType === this.props.id && this.props.isConnecting === false)
 		{
 			this.setState(state => (
@@ -30,7 +29,7 @@ class NeuralLayer extends React.Component
 	render()
 	{
 		return(
-			  	<Group id="layerGroup" offsetX={this.props.offsetX}>
+			  	<Group id="layerGroup" offsetX={this.props.offsetX} nIndex={this.props.nIndex}>
 					<Rect
 						x={this.props.x}
 					 	width={150}

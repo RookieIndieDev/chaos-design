@@ -16,10 +16,7 @@ class Main extends React.Component
 		this.onAddNeuralLayer = this.onAddNeuralLayer.bind(this);
 		this.getCurrentLayerNeuronCount = this.getCurrentLayerNeuronCount.bind(this);
 		this.onScroll = this.onScroll.bind(this);
-		this.onLayerDragMove = this.onLayerDragMove.bind(this);
 		this.onConnectorClick = this.onConnectorClick.bind(this);
-		this.onConnectorMove = this.onConnectorMove.bind(this);
-		this.onConnectMouseOver = this.onConnectMouseOver.bind(this);
 		this.onNeuronClick = this.onNeuronClick.bind(this);
 		this.onStageRightClick = this.onStageRightClick.bind(this);
 		this.shapeRef = React.createRef();
@@ -40,9 +37,12 @@ class Main extends React.Component
 			currentLayerNeuronCount:0,
 			totalNumberOfNeurons:0,
 			numberOfMiddleLayers:0,
-			middleLayers:[],
-			baseType:"",
 			neurons:[],
+			middleLayers:[],
+			connections:[],
+			weights:[],
+			dependencyNeuron:null,
+			baseType:"",
 			scaleAmount:1,
 			selectedNeuronId:"",
 			connectorX:0,
@@ -81,16 +81,18 @@ class Main extends React.Component
 
 				case "middle":
 					color = "#60A5FA";
-					circleTwo = this.circleRef.current.clone({x:-5, y:25, radius:8, shadowOffsetY:5, shadowColor:"gray", shadowBlur:5})
+					temp = this.simmodelNeurons.find(neuron => neuron === this.state.currentNeuron)
+					circleTwo = this.circleRef.current.clone({x:-5, y:25, radius:8, shadowOffsetY:5, shadowColor:"gray", shadowBlur:5, name:"neuronConnector"})
+					circleTwo.setAttr("connectFrom", false)
 					circleTwo.on("click", this.onConnectorClick)
-					circleTwo.on("mouseover", this.onConnectMouseOver)
 				break;
 
 				case "output":
 					color = "#F87171"
 					temp = this.simmodelNeurons.find(neuron => neuron.$TYPE === this.state.currentNeuron)
 					keys = Object.keys(temp).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
-					circleTwo = this.circleRef.current.clone({x:-5, y:25, radius:8, shadowOffsetY:5, shadowColor:"gray", shadowBlur:5})
+					circleTwo = this.circleRef.current.clone({x:-5, y:25, radius:8, shadowOffsetY:5, shadowColor:"gray", shadowBlur:5, name:"neuronConnector" })
+					circleTwo.setAttr("connectFrom", false)
 					circleTwo.on("click", this.onConnectorClick)
 					//console.log(keys)
 				break;
@@ -101,9 +103,9 @@ class Main extends React.Component
 			var text = this.textRef.current.clone({align:"center", width:120, height:50, fontSize:10, padding:20, text:this.state.currentNeuron, wrap:"char", ellipsis:true })
 			var neuronId = this.textRef.current.clone({align:"center", width:120, height:50, fontSize:10, padding:30, offsetX:5, text:"neuronId: " + this.state.totalNumberOfNeurons, 
 				name:"neuron-" + this.state.totalNumberOfNeurons, wrap:"char"})
-			var circle = this.circleRef.current.clone({x:120, y:25, radius:8, shadowOffsetY:5, shadowColor:"gray", shadowBlur:5})
+			var circle = this.circleRef.current.clone({x:120, y:25, radius:8, shadowOffsetY:5, shadowColor:"gray", shadowBlur:5, name:"neuronConnector"})
 			circle.on("click", this.onConnectorClick)
-			circle.on("mouseover", this.onConnectMouseOver)
+			circle.setAttr("connectFrom", true)
 			var group = this.groupRef.current.clone({x:e.target.attrs.x , offsetX: -18, offsetY:(- this.state.currentLayerNeuronCount * 60)})
 
 			var neuron = {
@@ -129,15 +131,11 @@ class Main extends React.Component
 	}
 
 	onAddNeuralLayer(){
-		this.setState(state => (
-		{
-			baseType: "middle"
-		}))
 
 		this.setState(state => ({
 			numberOfMiddleLayers: state.numberOfMiddleLayers + 1,
 			middleLayers: [...state.middleLayers, <NeuralLayer x={250 * (state.middleLayers.length + 1)} stroke="#60A5FA" onClick={this.onNeuralLayerClick} 
-			key={this.state.numberOfMiddleLayers} id="middle" baseType={this.state.baseType} getCurrentLayerNeuronCount={this.getCurrentLayerNeuronCount} isConnecting={this.state.isConnecting}/>]
+			key={this.state.numberOfMiddleLayers} id="middle" baseType="middle" getCurrentLayerNeuronCount={this.getCurrentLayerNeuronCount} isConnecting={this.state.isConnecting} nIndex={this.state.numberOfMiddleLayers + 1}/>]
 		}))
 	}
 
@@ -164,69 +162,50 @@ class Main extends React.Component
 		}))
 	}
 
-	onLayerDragMove(e){
-		if(!this.state.isConnecting){
-			e.target.x(Math.max(-150, Math.min(e.target.x(), 20)));
-			e.target.y(Math.max(-10, Math.min(e.target.y(), 300)))
-			this.layerRef.current.batchDraw()
-		}
-	}
-
 	onConnectorClick(e){
 		var points;
 		var transform = this.layerRef.current.getAbsoluteTransform().copy()
-		var dependencyNeuron; 
 		transform.invert() 
-		var pos = transform.point(e.target.getAbsolutePosition())
+		let pos = transform.point(e.target.getAbsolutePosition())
 		if(this.state.isConnecting === true){
 			var temp = this.state.neurons.find(neuron => neuron.id === e.target.parent.children[2].attrs.name)
-			temp.dependencies = [dependencyNeuron]
+			temp.dependencies = [this.state.dependencyNeuron]
 			this.setState(state => ({
 				isConnecting:false,
 				target:e.target
-			}), () => {
-				if(this.state.source.parent.parent._id === this.state.target.parent.parent._id){
-					this.line.destroy()
-					this.layerRef.current.batchDraw()
+			}))
+			//Checking to see if a neuron is being connected to anbther neuron in the same layer 
+			if(this.state.source.parent.parent._id !== this.state.target.parent.parent._id){
+				var diff = Math.abs(this.state.source.parent.parent.getAttr("nIndex") - this.state.target.parent.parent.getAttr("nIndex")) //Check to see if the target's layer is the adjacent to the source layer			
+				if((diff) === 1){
+					points = [this.state.connectorX, this.state.connectorY, pos.x, pos.y]
+					this.setState(state => ({
+						connections: [...state.connections, <Line points={points} stroke="#6D28D9" strokeWidth={2} lineCap="round" listening={false} key={state.connections.length}/>],
+						weights: [...state.weights, this.state.dependencyNeuron.weight]
+					}))
 				}
-				console.log(this.state.target)
-			})
-		}else if(this.state.isConnecting === false){
-			dependencyNeuron = this.state.neurons.find(neuron => neuron.id === e.target.parent.children[2].attrs.name)
-			dependencyNeuron.weight = (Math.floor(Math.random() * (11)) - 5)
+			}
+		}else if(this.state.isConnecting === false && e.target.attrs.connectFrom === true){
+			e.target.stroke("green") 
+			e.target.strokeWidth(10)
 			this.setState(state => ({
 				connectorX: pos.x,
 				connectorY: pos.y,
 				isConnecting:true,
-				source:e.target
-			}))
-			points = [pos.x, pos.y]
-			this.line = this.lineRef.current.clone({points:points})
-			this.layerRef.current.add(this.line)
+				source:e.target,
+				dependencyNeuron: state.neurons.find(neuron => neuron.id === e.target.parent.children[2].attrs.name)
+			}), () => console.log(this.state.dependencyNeuron))
 		} 
 	}
 
-	onConnectMouseOver(e){
-		//console.log(e.target)
-	}
-
-	onConnectorMove(e){
-		if(this.state.isConnecting){
-			var transform = this.layerRef.current.getAbsoluteTransform().copy()
-			transform.invert()
-			var currentPos = transform.point(this.stageRef.current.getPointerPosition())
-			var points = [this.state.connectorX, this.state.connectorY, currentPos.x, currentPos.y ]
-			this.line.points(points)
-			this.layerRef.current.batchDraw()
-		}
-	}
-
 	onNeuronClick(e){
-		this.setState(state => ({
-			selectedNeuronId: e.target.attrs.name,
-			rectX:e.target.getAbsolutePosition().x + 100,
-			rectY:e.target.getAbsolutePosition().y
-		}))
+		if(!e.target.hasName("neuronConnector")){
+			this.setState(state => ({
+				selectedNeuronId: e.target.attrs.name,
+				rectX:e.target.getAbsolutePosition().x + 100,
+				rectY:e.target.getAbsolutePosition().y
+			}))
+		}
 	}
 
 	onStageRightClick(e){
@@ -235,8 +214,6 @@ class Main extends React.Component
 			this.setState(state => ({
 				isConnecting: false
 			}))
-			this.line.destroy()
-			this.layerRef.current.batchDraw()
 		}
 	}
 
@@ -246,15 +223,16 @@ class Main extends React.Component
 				<SidePane onNeuronSelect={this.onNeuronSelect} currentNeuronId={parseInt(this.state.currentNeuronId)} 
 					inputNeurons={simmodel.inputNeurons} outputNeurons={simmodel.outputNeurons} activators={simmodel.activators}
 					currentNeuron={this.state.currentNeuron} onAccordionSelect={this.onAccordionSelect}/>
-				<Stage width={window.innerWidth} height={window.innerHeight} className="bg-gray-200 overflow-y-hidden overflow-x-hidden" ref={this.stageRef} onWheel={e => this.onScroll(e)} 
-				onMouseMove={this.onConnectorMove} onClick={this.onStageRightClick}>
-				  <Layer draggable ref={this.layerRef} scaleX={this.state.scaleAmount} scaleY={this.state.scaleAmount} onDragMove={this.onLayerDragMove}>
+				<Stage width={window.innerWidth} height={window.innerHeight} className="bg-gray-200 overflow-y-hidden overflow-x-hidden" ref={this.stageRef} onWheel={e => this.onScroll(e)} onClick={this.onStageRightClick}>
+				  <Layer ref={this.layerRef} scaleX={this.state.scaleAmount} scaleY={this.state.scaleAmount}>
 					  <Group ref={this.neuralLayerGroup} x={250} y={50}>
-						  <NeuralLayer stroke="#10B981" onClick={this.onNeuralLayerClick} id="input" baseType={this.state.baseType} getCurrentLayerNeuronCount={this.getCurrentLayerNeuronCount} isConnecting={this.state.isConnecting}/>
+						  <NeuralLayer stroke="#10B981" onClick={this.onNeuralLayerClick} id="input" baseType={this.state.baseType} getCurrentLayerNeuronCount={this.getCurrentLayerNeuronCount} 
+						  isConnecting={this.state.isConnecting} nIndex={0}/>
 						  {this.state.middleLayers}
 						  <NeuralLayer offsetX={-250 * (this.state.middleLayers.length + 1)} stroke="#F87171" onClick={this.onNeuralLayerClick} id="output" baseType={this.state.baseType}
-						   getCurrentLayerNeuronCount={this.getCurrentLayerNeuronCount} isConnecting={this.state.isConnecting}/>
+						   getCurrentLayerNeuronCount={this.getCurrentLayerNeuronCount} isConnecting={this.state.isConnecting} nIndex={this.state.numberOfMiddleLayers + 1} />
 					  </Group>
+					  {this.state.connections}
 					  <Text x={0} y={0} ref={this.textRef} fill="white" align="center"/>			  
 					  <Group x={0} y={0} ref={this.groupRef} width={100} height={150}/>
 					  <Rect
@@ -275,7 +253,6 @@ class Main extends React.Component
 					  		fill="#9CA3AF"	
 					  		ref={this.circleRef}
 					  	/>
-					  	<Line ref={this.lineRef} stroke="#6D28D9" strokeWidth={2} lineCap="round"/>
 				    </Layer>
 
 				    <Layer >
