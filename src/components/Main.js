@@ -5,6 +5,7 @@ import SidePane from './SidePane.js'
 import simmodel from '../chaosnet/chaoscraftDiscoverySimmodel.json'
 import NeuralLayer from './NeuralLayer.js'
 import AddMiddleLayerBtn from './AddMiddleLayerBtn.js'
+import ExportNNetBtn from './ExportNNetBtn.js'
 
 class Main extends React.Component
 {
@@ -19,6 +20,8 @@ class Main extends React.Component
 		this.onConnectorClick = this.onConnectorClick.bind(this);
 		this.onNeuronClick = this.onNeuronClick.bind(this);
 		this.onStageRightClick = this.onStageRightClick.bind(this);
+		this.convertToJSON = this.convertToJSON.bind(this);
+		this.addTextArea = this.addTextArea.bind(this);
 		this.shapeRef = React.createRef();
 		this.stageRef = React.createRef();
 		this.layerRef = React.createRef();
@@ -40,7 +43,6 @@ class Main extends React.Component
 			neurons:[],
 			middleLayers:[],
 			connections:[],
-			weights:[],
 			dependencyNeuron:null,
 			baseType:"",
 			scaleAmount:1,
@@ -51,12 +53,26 @@ class Main extends React.Component
 			rectX:0,
 			rectY:0,
 			source:null,
-			target:null
+			target:null,
+			enableWarnbox:false,
+			keys:[]
 		}
 	}
 
 	componentDidMount(){
 		//console.log(this.simmodelNeurons)
+	}
+
+	convertToJSON(){
+		var output = {
+			neurons:this.state.neurons
+		}
+		const blob = new Blob([JSON.stringify(output)], {type:"application/json"})
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.download = 'NNet.json';
+		link.href = url;
+		link.click();
 	}
 
 	onNeuralLayerClick(e){
@@ -99,14 +115,6 @@ class Main extends React.Component
 				default:
 				color=""
 			}
-			var shape = this.shapeRef.current.clone({width: 120, height: 50, fill:color})
-			var text = this.textRef.current.clone({align:"center", width:120, height:50, fontSize:10, padding:20, text:this.state.currentNeuron, wrap:"char", ellipsis:true })
-			var neuronId = this.textRef.current.clone({align:"center", width:120, height:50, fontSize:10, padding:30, offsetX:5, text:"neuronId: " + this.state.totalNumberOfNeurons, 
-				name:"neuron-" + this.state.totalNumberOfNeurons, wrap:"char"})
-			var circle = this.circleRef.current.clone({x:120, y:25, radius:8, shadowOffsetY:5, shadowColor:"gray", shadowBlur:5, name:"neuronConnector"})
-			circle.on("click", this.onConnectorClick)
-			circle.setAttr("connectFrom", true)
-			var group = this.groupRef.current.clone({x:e.target.attrs.x , offsetX: -18, offsetY:(- this.state.currentLayerNeuronCount * 60)})
 
 			var neuron = {
 				_base_type:this.state.baseType,
@@ -114,8 +122,18 @@ class Main extends React.Component
 				$TYPE:this.state.currentNeuron,
 				dependencies:[]
 			}
-			if(this.state.baseType !== "middle")
-				keys.forEach(key => neuron[key] = "default")
+
+/*			if(this.state.baseType !== "middle")
+				keys.forEach(key => neuron[key] = "default")*/
+			var shape = this.shapeRef.current.clone({width: 120, height: 50, fill:color})
+			var text = this.textRef.current.clone({align:"center", width:120, height:50, fontSize:10, padding:20, text:this.state.currentNeuron, wrap:"char", ellipsis:true })
+			var neuronId = this.textRef.current.clone({align:"center", width:120, height:50, fontSize:10, padding:30, offsetX:5, text:"neuronId: " + this.state.totalNumberOfNeurons, 
+				name:"neuron-" + this.state.totalNumberOfNeurons, wrap:"char"})
+			var circle = this.circleRef.current.clone({x:120, y:25, radius:8, shadowOffsetY:5, shadowColor:"gray", shadowBlur:5, name:"neuronConnector"})
+			circle.on("click", this.onConnectorClick)
+			circle.setAttr("connectFrom", true)
+			var group = this.groupRef.current.clone({x:e.target.attrs.x , offsetX: -18, offsetY:(- this.state.currentLayerNeuronCount * 60), keys:keys})
+
 			group.add(shape)
 			group.add(text)
 			group.add(neuronId)
@@ -127,16 +145,34 @@ class Main extends React.Component
 			e.target.parent.add(group)
 			this.setState({neurons: [...this.state.neurons, neuron]}) 
 			this.layerRef.current.batchDraw();
+			console.log(group.attrs.keys)
 		}
 	}
 
 	onAddNeuralLayer(){
+		if(this.state.numberOfMiddleLayers === 0){
+			this.setState(state => ({
+				enableWarnbox:true
+			}))
+		}
+		else{
+			this.setState(state => ({
+				numberOfMiddleLayers: state.numberOfMiddleLayers + 1,
+				middleLayers: [...state.middleLayers, <NeuralLayer x={250 * (state.middleLayers.length + 1)} stroke="#60A5FA" onClick={this.onNeuralLayerClick} 
+				key={this.state.numberOfMiddleLayers} id="middle" baseType="middle" getCurrentLayerNeuronCount={this.getCurrentLayerNeuronCount} isConnecting={this.state.isConnecting} nIndex={this.state.numberOfMiddleLayers + 1}/>],
+				
+			}))
+			this.clearDependenciesAndConnections()
+		}
+	}
 
+	clearDependenciesAndConnections(){
+		let tempNeurons = [...this.state.neurons]
+		tempNeurons.forEach(neuron => neuron.dependencies = [])
 		this.setState(state => ({
-			numberOfMiddleLayers: state.numberOfMiddleLayers + 1,
-			middleLayers: [...state.middleLayers, <NeuralLayer x={250 * (state.middleLayers.length + 1)} stroke="#60A5FA" onClick={this.onNeuralLayerClick} 
-			key={this.state.numberOfMiddleLayers} id="middle" baseType="middle" getCurrentLayerNeuronCount={this.getCurrentLayerNeuronCount} isConnecting={this.state.isConnecting} nIndex={this.state.numberOfMiddleLayers + 1}/>]
-		}))
+			neurons: tempNeurons,
+			connections:[]
+		}), () => console.log(this.state.neurons))
 	}
 
 	onNeuronSelect(e, type){
@@ -168,38 +204,46 @@ class Main extends React.Component
 		transform.invert() 
 		let pos = transform.point(e.target.getAbsolutePosition())
 		if(this.state.isConnecting === true){
-			var temp = this.state.neurons.find(neuron => neuron.id === e.target.parent.children[2].attrs.name)
-			temp.dependencies = [this.state.dependencyNeuron]
+/*			var temp = this.state.neurons.find(neuron => neuron.id === e.target.parent.children[2].attrs.name)
+			temp.dependencies = [this.state.dependencyNeuron]*/
 			this.setState(state => ({
 				isConnecting:false,
 				target:e.target
 			}))
+			var tempNeurons = [...this.state.neurons]
+			tempNeurons.forEach((neuron) => {
+				if(neuron.id === e.target.parent.children[2].attrs.name){
+					neuron.dependencies.push({neuronId:this.state.dependencyNeuron.id,weight: Math.random() * (10) - 5, _originNaturalGen: 0, _originGen: 0})
+				}
+			})
+			this.setState(state => ({
+				neurons:tempNeurons
+			}), () => console.log(this.state.neurons))
 			//Checking to see if a neuron is being connected to anbther neuron in the same layer 
 			if(this.state.source.parent.parent._id !== this.state.target.parent.parent._id){
 				var diff = Math.abs(this.state.source.parent.parent.getAttr("nIndex") - this.state.target.parent.parent.getAttr("nIndex")) //Check to see if the target's layer is the adjacent to the source layer			
 				if((diff) === 1){
 					points = [this.state.connectorX, this.state.connectorY, pos.x, pos.y]
 					this.setState(state => ({
-						connections: [...state.connections, <Line points={points} stroke="#6D28D9" strokeWidth={2} lineCap="round" listening={false} key={state.connections.length}/>],
-						weights: [...state.weights, this.state.dependencyNeuron.weight]
+						connections: [...state.connections, <Line points={points} stroke="#6D28D9" strokeWidth={2} lineCap="round" listening={false} key={state.connections.length}/>]
 					}))
 				}
 			}
 		}else if(this.state.isConnecting === false && e.target.attrs.connectFrom === true){
-			e.target.stroke("green") 
-			e.target.strokeWidth(10)
 			this.setState(state => ({
 				connectorX: pos.x,
 				connectorY: pos.y,
 				isConnecting:true,
-				source:e.target,
-				dependencyNeuron: state.neurons.find(neuron => neuron.id === e.target.parent.children[2].attrs.name)
-			}), () => console.log(this.state.dependencyNeuron))
+				source:e.target, 
+				dependencyNeuron: this.state.neurons.find(neuron => neuron.id === e.target.parent.children[2].attrs.name)
+			}))
 		} 
 	}
 
 	onNeuronClick(e){
 		if(!e.target.hasName("neuronConnector")){
+			if(e.target.parent.attrs.keys)
+				this.setState( state => ({keys:e.target.parent.attrs.keys}))
 			this.setState(state => ({
 				selectedNeuronId: e.target.attrs.name,
 				rectX:e.target.getAbsolutePosition().x + 100,
@@ -217,7 +261,80 @@ class Main extends React.Component
 		}
 	}
 
+	addTextArea(e){
+		var keyName = e.target.text()
+		var pos = e.target.getAbsolutePosition()
+		let tempNeurons
+		pos.x += this.stageRef.current.container().getBoundingClientRect().left
+		pos.y += this.stageRef.current.container().getBoundingClientRect().top
+		var textarea = document.createElement('textarea');
+		document.body.appendChild(textarea);
+		textarea.value = e.target.text();
+		textarea.style.position = 'absolute';
+		textarea.style.top = pos.y + 'px';
+		textarea.style.left = pos.x + 'px';
+		textarea.style.width = e.target.width();
+		textarea.style.height = 5
+
+		textarea.focus();
+
+		textarea.addEventListener("keydown", (e) =>{
+			tempNeurons = [...this.state.neurons]
+			var tempNeuron = this.state.neurons.find(neuron => neuron.id === this.state.selectedNeuronId)
+			tempNeuron[keyName] = textarea.value
+			tempNeurons.forEach(neuron => {
+				if(neuron.id === this.state.selectedNeuronId){
+					neuron = tempNeuron
+				}
+			})
+			if(e.keyCode === 13){
+				this.setState( state => ({
+					neurons:tempNeurons
+				}))
+				document.body.removeChild(textarea)
+			}
+
+		})
+		textarea.addEventListener("blur", (e) => {
+			document.body.removeChild(textarea)
+		})
+	}
+
 	render() {
+		var exportBtn = this.state.totalNumberOfNeurons > 0?<ExportNNetBtn onClick={this.convertToJSON} data={this.state.jsonOutput}/>:null
+		let warnGroup;
+		var keyText = this.state.selectedNeuronId?this.state.keys.map((key, index) => <Group>
+			<Rect fill="#F59E0B" width={100} height={20} shadowOffsetY = {5} shadowColor="gray" shadowBlur={5} x={this.state.rectX} y={this.state.rectY} offsetX={-10} offsetY={- (index+1) * 35} />
+			<Text text={key} x={this.state.rectX} y={this.state.rectY} offsetX={-15} offsetY={- (index+1) * 40} fill="white" onClick={this.addTextArea}/>
+			</Group>):null
+		if(this.state.enableWarnbox){
+		warnGroup=<Group x={500} y={200} width={100}>
+			<Rect offsetY={-10} shadowOffsetX={0} shadowColor="gray" fill="#EF4444" shadowOffsetY={0} shadowBlur={25} width={500} height={450} cornerRadius={10}/>
+			<Text offsetX={-100} offsetY={-100} fontSize={25} text="Adding a new Middle layer for the first time will clear existing connections you have made, are you sure you want to continue?" fill="white" width={300} wrap="word" align="center"/>
+			<Group onClick={() => this.setState(state => ({
+					enableWarnbox:false
+				}))}>
+				<Rect offsetY={-300} offsetX={-150} shadowColor="gray" fill="#E5E7EB" width={90} height={50} cornerRadius={10} />
+				<Text offsetX={-45} offsetY={-310} fontSize={20} text="No" fill="red" width={300} wrap="word" align="center"/>
+			</Group>
+			<Group onClick={() => {
+				this.setState(state => ({
+									enableWarnbox:false,
+									numberOfMiddleLayers: state.numberOfMiddleLayers + 1,
+									middleLayers: [...state.middleLayers, <NeuralLayer x={250 * (state.middleLayers.length + 1)} stroke="#60A5FA" onClick={this.onNeuralLayerClick} 
+									key={this.state.numberOfMiddleLayers} id="middle" baseType="middle" getCurrentLayerNeuronCount={this.getCurrentLayerNeuronCount} isConnecting={this.state.isConnecting} nIndex={this.state.numberOfMiddleLayers + 1}/>]
+								}))
+				this.clearDependenciesAndConnections()
+			}}>
+				<Rect offsetY={-300} offsetX={-250} shadowColor="gray" fill="#E5E7EB" width={90} height={50} cornerRadius={10} />
+
+				<Text offsetX={-145} offsetY={-310} fontSize={20} text="Yes" fill="red" width={300} wrap="word" align="center"/>
+			</Group>
+		</Group>
+		}else{
+			warnGroup=null
+		}
+
 		return(
 			<div className="flex flex-row">
 				<SidePane onNeuronSelect={this.onNeuronSelect} currentNeuronId={parseInt(this.state.currentNeuronId)} 
@@ -255,16 +372,21 @@ class Main extends React.Component
 					  	/>
 				    </Layer>
 
-				    <Layer >
+				    <Layer>
+						{exportBtn}
 				    	<AddMiddleLayerBtn onClick={this.onAddNeuralLayer}/>
+				    	<Text text={this.state.isConnecting?"Connecting, press right click to exit connect mode":""} x={100} y={window.innerHeight * 0.85} fill="blue"/>
 				    </Layer>
 				    <Layer>
+				    	{warnGroup}
 				    	<Rect x={this.state.rectX} y={this.state.rectY} offsetY={-10} shadowOffsetX={5} shadowColor="gray" onClick={() => this.setState(state => ({
-				    		selectedNeuronId:""
+				    		selectedNeuronId:"",
+				    		keys:[]
 				    	}))} shadowOffsetY={5} shadowBlur={25} width={200} height={150}
 				    		 fill="#FBBF24" cornerRadius={10} opacity={this.state.selectedNeuronId?100:0} /> 
+				    	{keyText}
 				    	<Text text={this.state.selectedNeuronId} x={this.state.rectX} y={this.state.rectY} offsetX={-50} offsetY={-25} fill="white"/>
-				    	<Text text={this.state.selectedNeuronId?"Click to Close":""} x={this.state.rectX} y={this.state.rectY} offsetX={-65} offsetY={-45} fill="white"/>
+				    	<Text text={this.state.selectedNeuronId?"Click to Close":""} x={this.state.rectX} y={this.state.rectY} offsetX={-65} offsetY={-100} fill="white"/>
 				    </Layer>
 				</Stage>
 			</div>
