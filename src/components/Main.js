@@ -146,7 +146,6 @@ class Main extends React.Component
 			e.target.parent.add(group)
 			this.setState({neurons: [...this.state.neurons, neuron]}) 
 			this.layerRef.current.batchDraw();
-			console.log(group.attrs.keys)
 		}
 	}
 
@@ -173,7 +172,7 @@ class Main extends React.Component
 		this.setState(state => ({
 			neurons: tempNeurons,
 			connections:[]
-		}), () => console.log(this.state.neurons))
+		}))
 	}
 
 	onNeuronSelect(e, type){
@@ -219,7 +218,7 @@ class Main extends React.Component
 			})
 			this.setState(state => ({
 				neurons:tempNeurons
-			}), () => console.log(this.state.neurons))
+			}))
 			//Checking to see if a neuron is being connected to anbther neuron in the same layer 
 			if(this.state.source.parent.parent._id !== this.state.target.parent.parent._id){
 				var diff = Math.abs(this.state.source.parent.parent.getAttr("nIndex") - this.state.target.parent.parent.getAttr("nIndex")) //Check to see if the target's layer is the adjacent to the source layer			
@@ -317,7 +316,6 @@ class Main extends React.Component
 					<input type="file" className="py-10 px-10" accept=".json" onChange={ (e) => 
 					{
 						var fileReader = new FileReader()
-						console.log(e.target.files[0])
 						fileReader.readAsText(e.target.files[0])
 						fileReader.addEventListener("load", (e) =>{
 							simmodel = JSON.parse(fileReader.result)
