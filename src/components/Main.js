@@ -264,12 +264,12 @@ class Main extends React.Component
 	addTextArea(e){
 		var keyName = e.target.text()
 		var pos = e.target.getAbsolutePosition()
-		let tempNeurons
+		let tempNeurons = [...this.state.neurons]
 		pos.x += this.stageRef.current.container().getBoundingClientRect().left
 		pos.y += this.stageRef.current.container().getBoundingClientRect().top
 		var textarea = document.createElement('textarea');
 		document.body.appendChild(textarea);
-		textarea.value = e.target.text();
+		textarea.placeholder = e.target.text()+" (Press Enter to save)";
 		textarea.style.position = 'absolute';
 		textarea.style.top = pos.y + 'px';
 		textarea.style.left = pos.x + 'px';
@@ -279,14 +279,14 @@ class Main extends React.Component
 		textarea.focus();
 
 		textarea.addEventListener("keydown", (e) =>{
-			tempNeurons = [...this.state.neurons]
+			/*tempNeurons = [...this.state.neurons]
 			var tempNeuron = this.state.neurons.find(neuron => neuron.id === this.state.selectedNeuronId)
 			tempNeuron[keyName] = textarea.value
 			tempNeurons.forEach(neuron => {
 				if(neuron.id === this.state.selectedNeuronId){
 					neuron = tempNeuron
 				}
-			})
+			})*/
 			if(e.keyCode === 13){
 				this.setState( state => ({
 					neurons:tempNeurons
@@ -295,6 +295,23 @@ class Main extends React.Component
 			}
 
 		})
+
+		textarea.addEventListener("keyup", (e) => {
+			var tempNeuron = this.state.neurons.find(neuron => neuron.id === this.state.selectedNeuronId)
+			if(isNaN(textarea.value)){
+				tempNeuron[keyName] = textarea.value
+			}else{
+				tempNeuron[keyName] = parseFloat(textarea.value)
+			}
+			
+
+			tempNeurons.forEach(neuron => {
+				if(neuron.id === this.state.selectedNeuronId){
+					neuron = tempNeuron
+				}
+			})
+		})
+
 		textarea.addEventListener("blur", (e) => {
 			document.body.removeChild(textarea)
 		})
@@ -315,24 +332,31 @@ class Main extends React.Component
 					<p className="text-xl text-red-500">{this.state.errorText}</p>
 					<input type="file" className="py-10 px-10" accept=".json" onChange={ (e) => 
 					{
-						var fileReader = new FileReader()
-						fileReader.readAsText(e.target.files[0])
-						fileReader.addEventListener("load", (e) =>{
-							simmodel = JSON.parse(fileReader.result)
-							if(simmodel.inputNeurons && simmodel.activators && simmodel.outputNeurons){
-								this.setState(state => ({
-									simmodel:simmodel
-								}), () => this.setState(state => ({
-									simmodelNeurons:state.simmodel.inputNeurons.concat(state.simmodel.activators.concat(state.simmodel.outputNeurons))
-								})))
-							}
-							else{
-								this.setState(state => ({
-									errorText:"Error: Invalid Simmodel, upload a correct simmodel"
-								}))
-							}
-						})
+						if(e.target.files[0].type === "application/json"){
+								var fileReader = new FileReader()
+								fileReader.readAsText(e.target.files[0])
+								fileReader.addEventListener("load", (e) =>{
+									simmodel = JSON.parse(fileReader.result)
+									if(simmodel.inputNeurons && simmodel.activators && simmodel.outputNeurons){
+										this.setState(state => ({
+											simmodel:simmodel
+										}), () => this.setState(state => ({
+											simmodelNeurons:state.simmodel.inputNeurons.concat(state.simmodel.activators.concat(state.simmodel.outputNeurons))
+										})))
+									}
+									else{
+										this.setState(state => ({
+											errorText:"Error: Invalid Simmodel, upload a correct simmodel"
+										}))
+									}
+								})
+							}else{
+							this.setState(state => ({
+								errorText:"Invalid file, upload the correct JSON Simmodel"
+							}))
+						}
 					}
+
 					}/>
 				</div>
 				</div>)
@@ -341,7 +365,7 @@ class Main extends React.Component
 				var exportBtn = this.state.totalNumberOfNeurons > 0?<ExportNNetBtn onClick={this.convertToJSON} data={this.state.jsonOutput}/>:null
 				let warnGroup;
 				var keyText = this.state.selectedNeuronId?this.state.keys.map((key, index) => <Group>
-					<Rect fill="#F59E0B" width={100} height={20} shadowOffsetY = {5} shadowColor="gray" shadowBlur={5} x={this.state.rectX} y={this.state.rectY} offsetX={-10} offsetY={- (index+1) * 35} />
+					<Rect fill="#F59E0B" width={120} height={20} shadowOffsetY = {5} shadowColor="gray" shadowBlur={5} x={this.state.rectX} y={this.state.rectY} offsetX={-10} offsetY={- (index+1) * 35} />
 					<Text text={key} x={this.state.rectX} y={this.state.rectY} offsetX={-15} offsetY={- (index+1) * 40} fill="white" onClick={this.addTextArea}/>
 					</Group>):null
 				if(this.state.enableWarnbox){
