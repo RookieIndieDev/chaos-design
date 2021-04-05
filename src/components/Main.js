@@ -120,12 +120,12 @@ class Main extends React.Component
 			var neuron = {
 				_base_type:this.state.baseType,
 				id:"neuron-"+this.state.totalNumberOfNeurons,
-				$TYPE:this.state.currentNeuron,
+				$TYPE:(this.state.baseType !== "middle"?this.state.currentNeuron:"MiddleNeuron"),
 				dependencies:[]
 			}
 
-/*			if(this.state.baseType !== "middle")
-				keys.forEach(key => neuron[key] = "default")*/
+			if(this.state.baseType === "middle")
+				neuron["activator"] = this.state.currentNeuron
 			var shape = this.shapeRef.current.clone({width: 120, height: 50, fill:color})
 			var text = this.textRef.current.clone({align:"center", width:120, height:50, fontSize:10, padding:20, text:this.state.currentNeuron, wrap:"char", ellipsis:true })
 			var neuronId = this.textRef.current.clone({align:"center", width:120, height:50, fontSize:10, padding:30, offsetX:5, text:"neuronId: " + this.state.totalNumberOfNeurons, 
@@ -322,11 +322,11 @@ class Main extends React.Component
 			let simmodel;
 			return(			
 				<div className="justify-center flex w-screen h-screen bg-indigo-500">
-				<div className="rounded-xl shadow-2xl h-1/2 w-2/4 mt-52 bg-white pt-5">
-					<p className="font-semibold text-4xl text-gray-800 py-5 tracking-wide">
+				<div className="rounded-xl shadow-2xl opacity-100 h-1/2 w-2/4 mt-52 bg-white pt-20">
+					<p className="font-semibold text-4xl text-gray-900 py-5 tracking-wide select-none">
 						Let's Begin!
 					</p>
-					<p className="font-semibold text-2xl text-gray-600 py-5">
+					<p className="font-semibold text-2xl text-gray-900 py-5 tracking-wide select-none">
 						Upload Your Simmodel
 					</p>
 					<p className="text-xl text-red-500">{this.state.errorText}</p>
