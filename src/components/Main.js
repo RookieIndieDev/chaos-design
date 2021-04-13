@@ -219,7 +219,7 @@ class Main extends React.Component
 			this.setState(state => ({
 				neurons:tempNeurons
 			}))
-			//Checking to see if a neuron is being connected to anbther neuron in the same layer 
+			//Checking to see if a neuron is being connected to another neuron in the same layer 
 			if(this.state.source.parent.parent._id !== this.state.target.parent.parent._id){
 				var diff = Math.abs(this.state.source.parent.parent.getAttr("nIndex") - this.state.target.parent.parent.getAttr("nIndex")) //Check to see if the target's layer is the adjacent to the source layer			
 				if((diff) === 1){
