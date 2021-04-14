@@ -18,5 +18,5 @@ ChaosDesign uses the following dependencies:
 
 ---
 
-Click [Here]() for a detailed guide how to use ChaosDesign
+
 
