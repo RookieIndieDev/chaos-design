@@ -321,7 +321,7 @@ class Main extends React.Component
 		if(!this.state.simmodel){
 			let simmodel;
 			return(			
-				<div className="justify-center flex w-screen h-screen bg-indigo-500">
+				<div className="justify-center flex w-screen h-screen bg-gradient-to-b from-indigo-400 via-indigo-500 to-indigo-600">
 				<div className="rounded-xl shadow-2xl opacity-100 h-1/2 w-2/4 mt-52 bg-white pt-20">
 					<p className="font-semibold text-4xl text-gray-900 py-5 tracking-wide select-none">
 						Let's Begin!
