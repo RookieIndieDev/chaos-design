@@ -7,7 +7,7 @@ class NeuralLayer extends React.Component
 		super(props);
 		this.state = {
 			neuronCount:0,
-			scaleY:1
+			height:550
 		}
 		this.onLayerClick = this.onLayerClick.bind(this);
 	}
@@ -18,7 +18,7 @@ class NeuralLayer extends React.Component
 			this.setState(state => (
 			{
 				neuronCount:state.neuronCount+1,
-				scaleY:state.scaleY + (state.neuronCount * 0.01)
+				height: state.height + 50
 			}))
 		}
 		this.props.getCurrentLayerNeuronCount(this.state.neuronCount)
@@ -33,7 +33,7 @@ class NeuralLayer extends React.Component
 					<Rect
 						x={this.props.x}
 					 	width={150}
-					  	height={550}
+					  	height={this.state.height}
 					  	cornerRadius={2}
 					  	lineCap="round"
 					  	stroke={this.props.stroke}
@@ -43,7 +43,6 @@ class NeuralLayer extends React.Component
 					  	shadowBlur={5}
 					  	onClick={(e) => this.onLayerClick(e)}
 					  	id={this.props.id}
-					  	scaleY={this.state.scaleY}
 					 />
 				  	</Group>
 			)
