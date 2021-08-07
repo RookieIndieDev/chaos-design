@@ -322,43 +322,48 @@ class Main extends React.Component
 			let simmodel;
 			return(			
 				<div className="justify-center flex w-screen h-screen bg-gradient-to-b from-indigo-400 via-indigo-500 to-indigo-600">
-				<div className="rounded-xl shadow-2xl opacity-100 h-1/2 w-2/4 mt-52 bg-white pt-20">
-					<p className="font-semibold text-4xl text-gray-900 py-5 tracking-wide select-none">
-						Let's Begin!
-					</p>
-					<p className="font-semibold text-2xl text-gray-900 py-5 tracking-wide select-none">
-						Upload Your Simmodel
-					</p>
-					<p className="text-xl text-red-500">{this.state.errorText}</p>
-					<input type="file" className="py-10 px-10" accept=".json" onChange={ (e) => 
-					{
-						if(e.target.files[0].type === "application/json"){
-								var fileReader = new FileReader()
-								fileReader.readAsText(e.target.files[0])
-								fileReader.addEventListener("load", (e) =>{
-									simmodel = JSON.parse(fileReader.result)
-									if(simmodel.inputNeurons && simmodel.activators && simmodel.outputNeurons){
+					<div className="rounded-xl shadow-2xl opacity-100 h-1/2 w-2/4 mt-52 bg-gray-100 pt-20">
+						<p className="font-bold text-4xl text-gray-600 py-5 tracking-wide select-none">
+							Let's Begin!
+						</p>
+						<p className="font-semibold text-2xl text-gray-600 py-5 tracking-wide select-none">
+							Upload Your Simmodel
+						</p>
+						<p className="text-xl text-red-500">{this.state.errorText}</p>
+						<div className="mt-10">
+							<label className="w-64 h-10 px-10 rounded-lg py-5 bg-purple-400 shadow-lg hover:bg-purple-500">
+								<span className="text-white text-xl font-semibold">Upload</span>
+								<input type="file" className="hidden" accept=".json" onChange={ (e) => 
+								{
+									if(e.target.files[0].type === "application/json"){
+											var fileReader = new FileReader()
+											fileReader.readAsText(e.target.files[0])
+											fileReader.addEventListener("load", (e) =>{
+												simmodel = JSON.parse(fileReader.result)
+												if(simmodel.inputNeurons && simmodel.activators && simmodel.outputNeurons){
+													this.setState(state => ({
+														simmodel:simmodel
+													}), () => this.setState(state => ({
+														simmodelNeurons:state.simmodel.inputNeurons.concat(state.simmodel.activators.concat(state.simmodel.outputNeurons))
+													})))
+												}
+												else{
+													this.setState(state => ({
+														errorText:"Error: Invalid Simmodel, upload a correct simmodel"
+													}))
+												}
+											})
+										}else{
 										this.setState(state => ({
-											simmodel:simmodel
-										}), () => this.setState(state => ({
-											simmodelNeurons:state.simmodel.inputNeurons.concat(state.simmodel.activators.concat(state.simmodel.outputNeurons))
-										})))
-									}
-									else{
-										this.setState(state => ({
-											errorText:"Error: Invalid Simmodel, upload a correct simmodel"
+											errorText:"Invalid file, upload the correct JSON Simmodel"
 										}))
 									}
-								})
-							}else{
-							this.setState(state => ({
-								errorText:"Invalid file, upload the correct JSON Simmodel"
-							}))
-						}
-					}
+								}
 
-					}/>
-				</div>
+								}/>
+							</label>
+						</div>
+					</div>
 				</div>)
 		}
 		else{
