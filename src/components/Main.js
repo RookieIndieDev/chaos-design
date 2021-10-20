@@ -2,7 +2,6 @@ import '../index.css';
 import { Stage, Layer, Rect, Text, Group, Circle, Line } from 'react-konva';
 import React from "react";
 import SidePane from './SidePane.js'
-//import simmodel from '../chaosnet/chaoscraftDiscoverySimmodel.json'
 import NeuralLayer from './NeuralLayer.js'
 import AddMiddleLayerBtn from './AddMiddleLayerBtn.js'
 import ExportNNetBtn from './ExportNNetBtn.js'
@@ -60,10 +59,6 @@ class Main extends React.Component
 		}
 	}
 
-	componentDidMount(){
-		//console.log(this.simmodelNeurons)
-	}
-
 	convertToJSON(){
 		var output = {
 			neurons:this.state.neurons
@@ -93,7 +88,6 @@ class Main extends React.Component
 					color = "#10B981";
 					temp = this.state.simmodelNeurons.find(neuron => neuron.$TYPE === this.state.currentNeuron)
 					keys = Object.keys(temp).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
-					//console.log(keys)
 				break;
 
 				case "middle":
@@ -111,7 +105,6 @@ class Main extends React.Component
 					circleTwo = this.circleRef.current.clone({x:-5, y:25, radius:8, shadowOffsetY:5, shadowColor:"gray", shadowBlur:5, name:"neuronConnector" })
 					circleTwo.setAttr("connectFrom", false)
 					circleTwo.on("click", this.onConnectorClick)
-					//console.log(keys)
 				break;
 				default:
 				color=""
@@ -279,14 +272,6 @@ class Main extends React.Component
 		textarea.focus();
 
 		textarea.addEventListener("keydown", (e) =>{
-			/*tempNeurons = [...this.state.neurons]
-			var tempNeuron = this.state.neurons.find(neuron => neuron.id === this.state.selectedNeuronId)
-			tempNeuron[keyName] = textarea.value
-			tempNeurons.forEach(neuron => {
-				if(neuron.id === this.state.selectedNeuronId){
-					neuron = tempNeuron
-				}
-			})*/
 			if(e.keyCode === 13){
 				this.setState( state => ({
 					neurons:tempNeurons
