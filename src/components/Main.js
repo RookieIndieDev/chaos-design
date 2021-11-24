@@ -260,33 +260,35 @@ class Main extends React.Component
 		let tempNeurons = [...this.state.neurons]
 		pos.x += this.stageRef.current.container().getBoundingClientRect().left
 		pos.y += this.stageRef.current.container().getBoundingClientRect().top
-		var textarea = document.createElement('textarea');
-		document.body.appendChild(textarea);
-		textarea.placeholder = e.target.text()+" (Press Enter to save)";
-		textarea.style.position = 'absolute';
-		textarea.style.top = pos.y + 'px';
-		textarea.style.left = pos.x + 'px';
-		textarea.style.width = e.target.width();
-		textarea.style.height = 5
+		var text = document.createElement('input');
+		text.type = "text"
+		document.body.appendChild(text);
+		text.placeholder = " " + e.target.text()+" (Press Enter to save)";
+		text.style.position = 'absolute';
+		text.style.top = pos.y + 'px';
+		text.style.left = pos.x + 'px';
+		text.style.borderRadius = 5 + "px";
+		text.style.borderColor = "#00ccff";
+		text.style.borderWidth = 2 + "px";
+		text.style.marginTop = 5 + "px";
+		text.focus();
 
-		textarea.focus();
-
-		textarea.addEventListener("keydown", (e) =>{
+		text.addEventListener("keydown", (e) =>{
 			if(e.keyCode === 13){
 				this.setState( state => ({
 					neurons:tempNeurons
 				}))
-				document.body.removeChild(textarea)
+				document.body.removeChild(text)
 			}
 
 		})
 
-		textarea.addEventListener("keyup", (e) => {
+		text.addEventListener("keyup", (e) => {
 			var tempNeuron = this.state.neurons.find(neuron => neuron.id === this.state.selectedNeuronId)
-			if(isNaN(textarea.value)){
-				tempNeuron[keyName] = textarea.value
+			if(isNaN(text.value)){
+				tempNeuron[keyName] = text.value
 			}else{
-				tempNeuron[keyName] = parseFloat(textarea.value)
+				tempNeuron[keyName] = parseFloat(text.value)
 			}
 			
 
@@ -297,8 +299,8 @@ class Main extends React.Component
 			})
 		})
 
-		textarea.addEventListener("blur", (e) => {
-			document.body.removeChild(textarea)
+		text.addEventListener("blur", (e) => {
+			document.body.removeChild(text)
 		})
 	}
 
