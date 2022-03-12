@@ -1,6 +1,6 @@
 import React from 'react'
 import {Rect, Group, Text} from 'react-konva'
-import Accordion from './Accordion.js'
+import Accordion from './Accordion/Accordion.js'
 
 class SidePane extends React.Component{
 	constructor(){

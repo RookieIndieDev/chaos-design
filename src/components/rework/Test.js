@@ -1,10 +1,10 @@
 import '../../index.css';
 import { Stage, Layer, Rect, Text, Group, Circle, Line } from 'react-konva';
 import React from "react";
-import SidePane from './SidePane.js'
-import NeuralLayer from './NeuralLayer.js'
+import SidePane from './Sidepane/SidePane.js'
+import NeuralLayer from './NeuralLayer/NeuralLayer.js'
 import Simmodel from '../../chaosnet/terrariaSimmodel.json'
-import FullyConnectButton from './FullyConnectButton.js'
+import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
 
 class Test extends React.Component
 {
@@ -173,7 +173,7 @@ class Test extends React.Component
 				}
 				this.setState(state => ({
 					selectedNeurons:temp
-				}), () => console.log(this.state.selectedNeurons))
+				}))
 			}
 		}
 		else if (e.target.hasName("neuron")){
@@ -188,9 +188,22 @@ class Test extends React.Component
 				array.push(neuron)
 				this.setState(state => ({
 					selectedNeurons:array
-				}), () => console.log(this.state.selectedNeurons))
+				}))
 
 		}
+		/* 
+			Getting all the neurons in the given layer. Use this somehow to connect layer on 
+			the left to the layer on right when fully connecting.
+		*/
+	    /*  target = listening rect, target.parent = Rect's group, parent of that is the group of the 
+	    	neural layer Rect which contains the groups for the neurons added into that layer. Ignoring the neural layer 
+	    	Rect, iterating over the rest, we can get the IDs of the dependency neurons we would want.
+	    */
+		e.target.parent.parent.children.forEach(element => {
+				if(element.attrs.name !== "neuralLayer"){
+					console.log(element.children[2].attrs.text)
+				}
+		})
 	}
 
 	handleKeyPress(e){
