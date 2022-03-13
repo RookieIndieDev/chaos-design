@@ -31,7 +31,8 @@ class Test extends React.Component
 				type:"input"
 			},{
 				type:"output"
-			}]
+			}],
+			connections:[]
 		}
 		this.zoom = this.zoom.bind(this)
 		this.onBoxDragStart = this.onBoxDragStart.bind(this)
@@ -44,6 +45,8 @@ class Test extends React.Component
 		this.clickOnNeuron = this.clickOnNeuron.bind(this)
 		this.onKeyUp = this.onKeyUp.bind(this)
 		this.addMiddleLayer = this.addMiddleLayer.bind(this)
+		this.fullyConnectLayers = this.fullyConnectLayers.bind(this)
+		this.makeConnection = this.makeConnection.bind(this)
 		this.stageRef = React.createRef()
 		this.neuronRef = React.createRef()
 	}
@@ -54,6 +57,7 @@ class Test extends React.Component
 		}))
 	}
 
+	//Remove weight generation for neurons, only used with something like BiasInput, not for every single neuron type.
 	addNeuron(e, neuronCount){
 		var neuralLayer = e.target.parent
 		var color = ""
@@ -83,11 +87,12 @@ class Test extends React.Component
 			color=""
 		}
 		var y = neuronCount !== 0?-neuronCount * 60:-5
-		var neuron = this.neuronRef.current.clone({opacity:1, X:40, offsetY:y})
+		var neuron = this.neuronRef.current.clone({opacity:1, offsetX:-40, offsetY:y})
 		neuron.children[0].attrs.fill = color
+		neuron.attrs.baseType = this.state.baseType+"neuron"
 		neuron.children[0].on('click', this.clickOnNeuron)
 		neuron.children[1].text(this.state.currentAccordionItemType)
-		neuron.children[2].text("id: " + this.state.totalNumberOfNeurons)
+		neuron.children[2].text("id: neuron-"+this.state.totalNumberOfNeurons)
 		neuralLayer.add(neuron)
 	}
 
@@ -191,19 +196,6 @@ class Test extends React.Component
 				}))
 
 		}
-		/* 
-			Getting all the neurons in the given layer. Use this somehow to connect layer on 
-			the left to the layer on right when fully connecting.
-		*/
-	    /*  target = listening rect, target.parent = Rect's group, parent of that is the group of the 
-	    	neural layer Rect which contains the groups for the neurons added into that layer. Ignoring the neural layer 
-	    	Rect, iterating over the rest, we can get the IDs of the dependency neurons we would want.
-	    */
-		e.target.parent.parent.children.forEach(element => {
-				if(element.attrs.name !== "neuralLayer"){
-					console.log(element.children[2].attrs.text)
-				}
-		})
 	}
 
 	handleKeyPress(e){
@@ -230,15 +222,17 @@ class Test extends React.Component
 		}
 	}
 
+
+	//Adding middle layers after adding output neurons screws things up somehow. Need to fix
 	addMiddleLayer(){
 		let layers = [...this.state.nLayers]
 		layers.splice(layers.length - 1, 0, {
-			type:"middle", id:layers.length + 1
+			type:"middle"
 		})
 		this.setState(
 			state => ({
 				nLayers:layers
-			}))
+	}))
 	}
 
 	componentDidMount(){
@@ -249,18 +243,53 @@ class Test extends React.Component
 		container.addEventListener('keyup', this.onKeyUp)
 	}
 
+	fullyConnectLayers(dependencies, neurons){
+		let currentNeurons = [...this.state.neurons]
+		for(let i = 0; i < dependencies.length; i++){
+			for(let j = 0; j < neurons.length; j++){
+				for(let k = 0; k < currentNeurons.length; k++){
+					if(currentNeurons[k].id === neurons[j].neuronId && neurons[j] !== undefined){
+						if(currentNeurons[k].dependencies.find(dep => dep.neuronId === dependencies[i].neuronId) === undefined){
+							currentNeurons[k].dependencies.push(dependencies[i])
+						}
+					}
+				}
+
+			}
+		}
+		this.setState(state => ({neurons: currentNeurons}))
+	}
+
+	makeConnection(dep, neuron){
+		let temp = [...this.state.connections]
+		let depRect=dep.getClientRect()
+		let neuronRect = neuron.getClientRect()
+		let X = depRect.x - neuronRect.x
+		let Y = depRect.y - neuronRect.y
+		temp.push({
+			x:depRect.x,
+			y:depRect.y+depRect.height/2,
+			points:[125, 0, -X, -Y]
+		})
+		this.setState(state => ({
+			connections:temp
+		}))
+
+	}
+
 	render(){
-		//Zoom in works, dragging works. Displaying Neurons works but need to implement Simmodel upload
+		//Need to implement Simmodel upload
 		let sidePane = <SidePane inputNeurons={Simmodel.inputNeurons} middleNeurons={Simmodel.activators} outputNeurons={Simmodel.outputNeurons} 
 		onAccordionItemSelect={this.onAccordionItemSelect} setBaseType={this.setBaseType} currentSelected={this.state.currentAccordionItemType}/>
 		let selectorBox = this.state.isDragging?<Rect x={this.state.selectorBoxX} y={this.state.selectorBoxY}
 		height={this.state.dragBoxHeight} stroke="#D1D5DB" width={this.state.dragBoxWidth} />:null
 		let neuralLayers = this.state.nLayers.map((item, index) => <NeuralLayer offsetX={(index+1) * -350} offsetY={-100} totalNumberOfNeurons={this.state.totalNumberOfNeurons} type={item.type} 
-			addNeuron={this.addNeuron} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} id={index}/>)
+			addNeuron={this.addNeuron} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} id={index}/>)		
 		let fullyConnectButtons = this.state.nLayers.map((item, index) => {
 				if(item.type !== "output")
-					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1}/>}
+					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection}/>}
 			)
+		let connections = this.state.connections.map((item, index) => <Line stroke="#9CA3AF" x={item.x} y={item.y} points={item.points} strokeWidth={5}/>)
 		return(
 			<Stage width={window.innerWidth} height={window.innerHeight} onMouseDown={this.onBoxDragStart} onMouseUp={this.onBoxDragEnd} ref={this.stageRef} onMouseMove={this.onBoxMove}>
 				<Layer draggable={!this.state.isDragging} onWheel={this.zoom} scaleX={this.state.layerScaleX} scaleY={this.state.layerScaleX}>
@@ -273,6 +302,7 @@ class Test extends React.Component
 						<Rect width={window.innerWidth * 4} height={window.innerHeight * 4} x={0} y={0} cornerRadius={5} opacity={0.05} name="layer" fill="gray"/>
 						{neuralLayers}
 						{fullyConnectButtons}
+						{connections}
 					</Group>
 				</Layer>
 				<Layer>

@@ -19,8 +19,6 @@ class NeuralLayer extends React.Component{
 				neuronCount: state.neuronCount+1
 			}))	
 		}
-		console.log(e.target.attrs.id)
-		console.log(this.props.id)
 	}
 
 	render(){
@@ -45,7 +43,7 @@ class NeuralLayer extends React.Component{
 				opacity={this.state.hovering?0.5:0.1} 
 				onMouseEnter={() => this.setState(state => ({hovering: true}))} 
 				onMouseLeave={() => this.setState(state => ({hovering: false}))}
-				onClick={this.onClick} id={this.props.id}/>
+				onClick={this.onClick} id={this.props.id} baseType={this.props.type}/>
 			</Group>
 		)
 	}

@@ -21,12 +21,34 @@ class FullyConnectButton extends React.Component
 		let nextLayer = stage.find(node => {
 			return node.attrs.id === nextId
 		})
+		let dependencies = []
+		let neurons = []
+
 		prevLayer[0].parent.children.forEach(item => {
 			if(item.attrs.name !== "neuralLayer"){
-				console.log(item.children[1])
-				console.log(item.children[2])
+				let dependency = {}
+				dependency.neuronId = item.children[2].attrs.text.split(": ")[1]
+				dependency.weight = Math.random() * (10) - 5 
+				dependencies.push(dependency)
 			}
 		})
+		nextLayer[0].parent.children.forEach(item => {
+			if(item.attrs.name !== "neuralLayer"){
+				let neuron = {}
+				neuron.neuronId = item.children[2].attrs.text.split(": ")[1]
+				neurons.push(neuron)
+			}
+		})
+		prevLayer[0].parent.children.forEach(dep => {
+			if(dep.attrs.name !== "neuralLayer"){
+				nextLayer[0].parent.children.forEach(neuron => {
+					if(neuron.attrs.name !== "neuralLayer"){
+						this.props.makeConnection(dep, neuron)
+					}
+				})
+			}
+		})
+		this.props.fullyConnectLayers(dependencies, neurons)
 	}
 
 	render(){
