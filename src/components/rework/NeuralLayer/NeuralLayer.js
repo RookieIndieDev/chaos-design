@@ -2,12 +2,10 @@ import React from 'react'
 import {Rect, Group} from 'react-konva'
 
 class NeuralLayer extends React.Component{
-	constructor(){
-		super()
+	constructor(props){
+		super(props)
 		this.state = {
 			neuronCount:0,
-			prevLayerId:0,
-			nextLayer:0,
 			hovering:false
 		}
 		this.groupRef = React.createRef()
@@ -21,6 +19,8 @@ class NeuralLayer extends React.Component{
 				neuronCount: state.neuronCount+1
 			}))	
 		}
+		console.log(e.target.attrs.id)
+		console.log(this.props.id)
 	}
 
 	render(){

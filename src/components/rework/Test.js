@@ -5,6 +5,7 @@ import SidePane from './Sidepane/SidePane.js'
 import NeuralLayer from './NeuralLayer/NeuralLayer.js'
 import Simmodel from '../../chaosnet/terrariaSimmodel.json'
 import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
+import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer.js'
 
 class Test extends React.Component
 {
@@ -27,11 +28,9 @@ class Test extends React.Component
 			selectedNeurons:[],
 			isShiftSelecting:false,
 			nLayers:[{
-				type:"input",
-				id:1
+				type:"input"
 			},{
-				type:"output",
-				id:2
+				type:"output"
 			}]
 		}
 		this.zoom = this.zoom.bind(this)
@@ -44,6 +43,7 @@ class Test extends React.Component
 		this.setBaseType = this.setBaseType.bind(this)
 		this.clickOnNeuron = this.clickOnNeuron.bind(this)
 		this.onKeyUp = this.onKeyUp.bind(this)
+		this.addMiddleLayer = this.addMiddleLayer.bind(this)
 		this.stageRef = React.createRef()
 		this.neuronRef = React.createRef()
 	}
@@ -230,6 +230,17 @@ class Test extends React.Component
 		}
 	}
 
+	addMiddleLayer(){
+		let layers = [...this.state.nLayers]
+		layers.splice(layers.length - 1, 0, {
+			type:"middle", id:layers.length + 1
+		})
+		this.setState(
+			state => ({
+				nLayers:layers
+			}))
+	}
+
 	componentDidMount(){
 		var container = this.stageRef.current.container()
 		container.tabIndex = 1;
@@ -240,12 +251,16 @@ class Test extends React.Component
 
 	render(){
 		//Zoom in works, dragging works. Displaying Neurons works but need to implement Simmodel upload
-		var sidePane = <SidePane inputNeurons={Simmodel.inputNeurons} middleNeurons={Simmodel.activators} outputNeurons={Simmodel.outputNeurons} 
+		let sidePane = <SidePane inputNeurons={Simmodel.inputNeurons} middleNeurons={Simmodel.activators} outputNeurons={Simmodel.outputNeurons} 
 		onAccordionItemSelect={this.onAccordionItemSelect} setBaseType={this.setBaseType} currentSelected={this.state.currentAccordionItemType}/>
-		var selectorBox = this.state.isDragging?<Rect x={this.state.selectorBoxX} y={this.state.selectorBoxY}
+		let selectorBox = this.state.isDragging?<Rect x={this.state.selectorBoxX} y={this.state.selectorBoxY}
 		height={this.state.dragBoxHeight} stroke="#D1D5DB" width={this.state.dragBoxWidth} />:null
-		var neuralLayers = this.state.nLayers.map((item, index) => <NeuralLayer offsetX={(index+1) * -350} offsetY={-100} totalNumberOfNeurons={this.state.totalNumberOfNeurons} type={item.type} 
-			addNeuron={this.addNeuron} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType}/>)
+		let neuralLayers = this.state.nLayers.map((item, index) => <NeuralLayer offsetX={(index+1) * -350} offsetY={-100} totalNumberOfNeurons={this.state.totalNumberOfNeurons} type={item.type} 
+			addNeuron={this.addNeuron} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} id={index}/>)
+		let fullyConnectButtons = this.state.nLayers.map((item, index) => {
+				if(item.type !== "output")
+					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1}/>}
+			)
 		return(
 			<Stage width={window.innerWidth} height={window.innerHeight} onMouseDown={this.onBoxDragStart} onMouseUp={this.onBoxDragEnd} ref={this.stageRef} onMouseMove={this.onBoxMove}>
 				<Layer draggable={!this.state.isDragging} onWheel={this.zoom} scaleX={this.state.layerScaleX} scaleY={this.state.layerScaleX}>
@@ -257,6 +272,7 @@ class Test extends React.Component
 					<Group>
 						<Rect width={window.innerWidth * 4} height={window.innerHeight * 4} x={0} y={0} cornerRadius={5} opacity={0.05} name="layer" fill="gray"/>
 						{neuralLayers}
+						{fullyConnectButtons}
 					</Group>
 				</Layer>
 				<Layer>
@@ -264,6 +280,9 @@ class Test extends React.Component
 				</Layer>
 				<Layer>
 					{selectorBox}
+				</Layer>
+				<Layer>
+					<AddMiddleLayer addMiddleLayer={this.addMiddleLayer}/>
 				</Layer>
 			</Stage>
 			)
