@@ -71,7 +71,7 @@ class Test extends React.Component
 			id:"neuron-"+this.state.totalNumberOfNeurons, weight:Math.random() * (10) - 5, dependencies:[], layerId:neuralLayer.children[0].attrs.id})
 		this.setState(state => ({
 			neurons:tempNeurons
-		}), () => console.log(this.state.neurons))
+		}))
 		switch(this.state.baseType){
 			case "input":
 				color = "#10B981";
@@ -204,19 +204,21 @@ class Test extends React.Component
 	}
 
 	handleKeyPress(e){
-		let selectNeurons = this.state.selectedNeurons
+		let selectNeurons = [...this.state.selectedNeurons]
 		let allNeurons = this.state.neurons
-		let allConnections = this.state.connections
+		let allConnections = [...this.state.connections]
 		if(e.code === "Delete"){
 			selectNeurons.forEach((item,array) => {
 				allNeurons.forEach((neuron, index, array) => {
 					if(item.parent.children[1].children[2].attrs.text.split("id: ")[1] === neuron.id){
+						allConnections.forEach((conn, index, array) => {
+							if(conn.sourceId === neuron.id){						
+								array.splice(array.indexOf(conn), 1)
+							}else if(conn.targetId === neuron.id){
+								array.splice(array.indexOf(conn), 1)
+							}
+						})
 						array.splice(array.indexOf(neuron), 1)
-					}
-				})
-				allConnections.forEach((conn, index, array) => {
-					if(conn.sourceId === item.parent.children[1].children[2].attrs.text.split("id: ")[1]|| conn.targetId === item.parent.children[1].children[2].attrs.text.split("id: ")[1]){
-						array.splice(array.indexOf(conn), 1)
 					}
 				})
 				item.destroy()
@@ -224,14 +226,16 @@ class Test extends React.Component
 			selectNeurons.length = 0
 			this.setState(state => ({
 				neurons:allNeurons
-			}), () => console.log(this.state.neurons))
+			}))
 		}else if(e.key === "Shift")
 			this.setState( state => ({
 				isShiftSelecting: true
-			}))
-
+			}))		
 		this.setState(state => ({
 			selectedNeurons:selectNeurons
+		}))
+		this.setState(state => ({
+			connections: allConnections
 		}))
 	}
 
@@ -283,8 +287,8 @@ class Test extends React.Component
 	}
 
 	makeConnection(dep, neuron){
-		let sourceId = dep.parent.children[1].children[2].attrs.text.split("id: ")[1]
-		let targetId = neuron.parent.children[1].children[2].attrs.text.split("id: ")[1]
+		let sourceId = dep.children[2].attrs.text.split("id: ")[1]
+		let targetId = neuron.children[2].attrs.text.split("id: ")[1]
 		let temp = [...this.state.connections]
 		let depRect=dep.getClientRect()
 		let neuronRect = neuron.getClientRect()
