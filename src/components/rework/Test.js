@@ -19,7 +19,6 @@ class Test extends React.Component
 			isDragging: false,
 			selectorBoxX:0,
 			selectorBoxY:0,
-			middleLayers:[],
 			neurons:[],
 			totalNumberOfNeurons:0,
 			currentAccordionItemType:"",
@@ -28,9 +27,11 @@ class Test extends React.Component
 			selectedNeurons:[],
 			isShiftSelecting:false,
 			nLayers:[{
-				type:"input"
+				type:"input",
+				neuronCount:0
 			},{
-				type:"output"
+				type:"output",
+				neuronCount:0
 			}],
 			connections:[]
 		}
@@ -70,7 +71,7 @@ class Test extends React.Component
 			id:"neuron-"+this.state.totalNumberOfNeurons, weight:Math.random() * (10) - 5, dependencies:[], layerId:neuralLayer.children[0].attrs.id})
 		this.setState(state => ({
 			neurons:tempNeurons
-		}))
+		}), () => console.log(this.state.neurons))
 		switch(this.state.baseType){
 			case "input":
 				color = "#10B981";
@@ -198,18 +199,39 @@ class Test extends React.Component
 		}
 	}
 
+	updateNeuralLayeraHeight(){
+
+	}
+
 	handleKeyPress(e){
-		var array = this.state.selectedNeurons
+		let selectNeurons = this.state.selectedNeurons
+		let allNeurons = this.state.neurons
+		let allConnections = this.state.connections
 		if(e.code === "Delete"){
-			array.forEach((item,array) => item.destroy())
-			array.length = 0
+			selectNeurons.forEach((item,array) => {
+				allNeurons.forEach((neuron, index, array) => {
+					if(item.parent.children[1].children[2].attrs.text.split("id: ")[1] === neuron.id){
+						array.splice(array.indexOf(neuron), 1)
+					}
+				})
+				allConnections.forEach((conn, index, array) => {
+					if(conn.sourceId === item.parent.children[1].children[2].attrs.text.split("id: ")[1]|| conn.targetId === item.parent.children[1].children[2].attrs.text.split("id: ")[1]){
+						array.splice(array.indexOf(conn), 1)
+					}
+				})
+				item.destroy()
+			})
+			selectNeurons.length = 0
+			this.setState(state => ({
+				neurons:allNeurons
+			}), () => console.log(this.state.neurons))
 		}else if(e.key === "Shift")
 			this.setState( state => ({
 				isShiftSelecting: true
 			}))
 
 		this.setState(state => ({
-			selectedNeurons:array
+			selectedNeurons:selectNeurons
 		}))
 	}
 
@@ -261,6 +283,8 @@ class Test extends React.Component
 	}
 
 	makeConnection(dep, neuron){
+		let sourceId = dep.parent.children[1].children[2].attrs.text.split("id: ")[1]
+		let targetId = neuron.parent.children[1].children[2].attrs.text.split("id: ")[1]
 		let temp = [...this.state.connections]
 		let depRect=dep.getClientRect()
 		let neuronRect = neuron.getClientRect()
@@ -269,7 +293,9 @@ class Test extends React.Component
 		temp.push({
 			x:depRect.x,
 			y:depRect.y+depRect.height/2,
-			points:[125, 0, -X, -Y]
+			points:[125, 0, -X, -Y],
+			sourceId:sourceId,
+			targetId:targetId
 		})
 		this.setState(state => ({
 			connections:temp
