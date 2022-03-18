@@ -31,8 +31,8 @@ class SidePane extends React.Component{
 
 	updateOffsets(){
 		if(this.state.selectedId === "input"){
-			var outputOffset=this.props.inputNeurons.length * -110;
-			var middleOffset=this.props.inputNeurons.length * -85;
+			var outputOffset=this.props.inputNeurons.length * -95;
+			var middleOffset=this.props.inputNeurons.length * -80;
 			this.setState(state => ({
 				outputAccordionY:outputOffset,
 				middleAccordionY:middleOffset

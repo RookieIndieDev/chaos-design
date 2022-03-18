@@ -221,33 +221,45 @@ class Test extends React.Component
 		let allNeurons = [...this.state.neurons]
 		let nLayers = [...this.state.nLayers]
 		let allConnections = [...this.state.connections]
+		let removedNeurons = []
+		let prevLayer
+		let nextLayer
 		if(e.code === "Delete"){
-
-			// 					allConnections.forEach((conn, index, conns) => {
-			// 						if(conn.sourceId === neuron.id){						
-			// 							conns.splice(conns.indexOf(conn), 1)
-			// 						}else if(conn.targetId === neuron.id){
-			// 							conns.splice(conns.indexOf(conn), 1)
-			// 						}
-			// 					})
-			// 					neurons.splice(neurons.indexOf(neuron), 1)
 				selectNeurons.forEach((item) =>{
 					allNeurons.forEach((neuron, index, neurons) =>{
 						if(neuron.id === item.split("id: ")[1]){
 							nLayers.forEach(layer => {
 								if(neuron.layerId === layer.id){
 									layer.neuronCount -= 1
+									if(layer.type === "input"){
+										prevLayer = this.stageRef.current.find(node => {
+											return node.attrs.id === layer.id
+										})
+										nextLayer = this.stageRef.current.find(node => {
+											return node.attrs.id === layer.id+1
+										})
+									}else if(layer.type === "middle"){
+											prevLayer = this.stageRef.current.find(node => {
+												return node.attrs.id === layer.id-1
+											})
+											nextLayer = this.stageRef.current.find(node => {
+												return node.attrs.id === layer.id
+											})
+										}
+									}else{
+										prevLayer = this.stageRef.current.find(node => {
+											return node.attrs.id === layer.id-1
+										})
+										nextLayer = this.stageRef.current.find(node => {
+											return node.attrs.id === layer.id
+										})
+
+
 								}
 							})
-							// allConnections.forEach((conn, connIndex, conns) => {
-							// 	if(conn.sourceId === neuron.id){
-							// 		conns.splice(connIndex, 1)
-							// 	}else if(conn.targetId === neuron.id){
-							// 		conns.splice(connIndex, 1)
-							// 	}
-							// })
 							allConnections.length = 0
-							neurons.splice(neurons.indexOf(neuron), 1)
+							this.setState(state => ({connections: allConnections}))
+							removedNeurons = neurons.splice(neurons.indexOf(neuron), 1)
 							let toDelete = this.stageRef.current.find(node => node.attrs.text === item)
 							let parent = toDelete[0].parent.parent
 							toDelete.forEach(del => del.parent.destroy())
@@ -260,20 +272,59 @@ class Test extends React.Component
 					})
 				})
 			selectNeurons.length = 0
-			this.setState(state => ({
-				neurons:allNeurons
-			}))
+			removedNeurons.forEach(removedNeuron => {
+				allNeurons.forEach(neuron => {
+					neuron.dependencies.forEach((dep, depIndex, dependencies) => {
+						if(dep.neuronId === removedNeuron.id){
+							dependencies.splice(depIndex, 1)
+						}
+					})
+				})
+			})
+			if(nextLayer[0] !== undefined){
+				let dependencies = []
+				let neurons = []
+				prevLayer[0].children.forEach(item => {
+					if(item.attrs.name !== "neuralLayer"){
+						let dependency = {}
+						dependency.neuronId = item.children[2].attrs.text.split(": ")[1]
+						dependency.weight = Math.random() * (10) - 5 
+						dependencies.push(dependency)
+					}
+				})
+				nextLayer[0].children.forEach(item => {
+					if(item.attrs.name !== "neuralLayer"){
+						let neuron = {}
+						neuron.neuronId = item.children[2].attrs.text.split(": ")[1]
+						neurons.push(neuron)
+					}
+				})
+				prevLayer[0].children.forEach(dep => {
+					if(dep.attrs.name !== "neuralLayer"){
+						nextLayer[0].children.forEach(neuron => {
+							if(neuron.attrs.name !== "neuralLayer"){
+								this.makeConnection(dep, neuron)
+							}
+						})
+					}
+				})
+				this.fullyConnectLayers(dependencies, neurons)
+			}else{
+
+			}
+
+
 		}else if(e.key === "Shift"){
 			this.setState( state => ({
 				isShiftSelecting: true
 			}))	
 		}
-	
+		
 		this.setState(state => ({
-			selectedNeurons:selectNeurons
+			neurons:allNeurons
 		}))
 		this.setState(state => ({
-			connections: allConnections
+			selectedNeurons:selectNeurons
 		}))
 		this.setState(state => ({
 			nLayers:nLayers
@@ -313,6 +364,7 @@ class Test extends React.Component
 	}
 
 	fullyConnectLayers(dependencies, neurons){
+
 		let currentNeurons = [...this.state.neurons]
 		for(let i = 0; i < dependencies.length; i++){
 			for(let j = 0; j < neurons.length; j++){
@@ -330,6 +382,11 @@ class Test extends React.Component
 	}
 
 	makeConnection(dep, neuron){
+		this.setState(state => ({
+			layerScaleX:1
+		}))
+		this.stageRef.current.children[0].x(0)
+		this.stageRef.current.children[0].y(0)
 		let sourceId = dep.children[2].attrs.text.split("id: ")[1]
 		let targetId = neuron.children[2].attrs.text.split("id: ")[1]
 		let temp = [...this.state.connections]
