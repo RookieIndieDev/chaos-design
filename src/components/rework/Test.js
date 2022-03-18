@@ -1,5 +1,5 @@
 import '../../index.css';
-import { Stage, Layer, Rect, Text, Group, Circle, Line } from 'react-konva';
+import { Stage, Layer, Rect, Text, Group, Line } from 'react-konva';
 import React from "react";
 import SidePane from './Sidepane/SidePane.js'
 import NeuralLayer from './NeuralLayer/NeuralLayer.js'
@@ -28,10 +28,12 @@ class Test extends React.Component
 			isShiftSelecting:false,
 			nLayers:[{
 				type:"input",
-				neuronCount:0
+				neuronCount:0,
+				id:0
 			},{
 				type:"output",
-				neuronCount:0
+				neuronCount:0,
+				id:1
 			}],
 			connections:[]
 		}
@@ -59,16 +61,22 @@ class Test extends React.Component
 	}
 
 	//Remove weight generation for neurons, only used with something like BiasInput, not for every single neuron type.
-	addNeuron(e, neuronCount){
+	addNeuron(e){
 		var neuralLayer = e.target.parent
 		var color = ""
 		var tempNeurons = [...this.state.neurons]
-
+		let allLayers = [...this.state.nLayers]
+		let neuronCount = allLayers.find((element,index) => index === neuralLayer.attrs.id).neuronCount
+		allLayers.find((element,index) => index === neuralLayer.attrs.id).neuronCount += 1
 		this.setState(state => ({
 			totalNumberOfNeurons:state.totalNumberOfNeurons+1
 		}))
+		this.setState(state => ({
+			nLayers:allLayers
+		}))
+
 		tempNeurons.push({$TYPE:this.state.currentAccordionItemType, _base_type:this.state.baseType, 
-			id:"neuron-"+this.state.totalNumberOfNeurons, weight:Math.random() * (10) - 5, dependencies:[], layerId:neuralLayer.children[0].attrs.id})
+			id:"neuron-"+this.state.totalNumberOfNeurons, weight:Math.random() * (10) - 5, dependencies:[], layerId:neuralLayer.attrs.id})
 		this.setState(state => ({
 			neurons:tempNeurons
 		}))
@@ -94,6 +102,7 @@ class Test extends React.Component
 		neuron.children[0].on('click', this.clickOnNeuron)
 		neuron.children[1].text(this.state.currentAccordionItemType)
 		neuron.children[2].text("id: neuron-"+this.state.totalNumberOfNeurons)
+		neuron.children[0].attrs.id =" "
 		neuralLayer.add(neuron)
 	}
 
@@ -127,7 +136,12 @@ class Test extends React.Component
 		}
 		this.highlightAndSelectNeuron(e)
 		if(e.target.hasName("layer") && this.state.selectedNeurons.length > 0){
-			this.state.selectedNeurons.forEach((item) => item.children[0].setStroke("white"))
+			let tempNeurons = this.stageRef.current.find(node => node.attrs.name==="neuron")
+			tempNeurons.forEach(neuron => {
+				if(neuron.attrs.id !== "ignore"){
+					neuron.setStroke("white")
+				}
+			})
 		}
 	}
 
@@ -158,8 +172,8 @@ class Test extends React.Component
 			e.target.attrs.strokeWidth=5
 			var obj = e.target.parent;
 			var temp = [...this.state.selectedNeurons]
-			if(!temp.includes(obj)){
-				temp.push(obj)
+			if(!temp.includes(obj.children[2].attrs.text)){
+				temp.push(obj.children[2].attrs.text)
 			}
 			this.setState(state => ({
 				selectedNeurons:temp
@@ -168,14 +182,15 @@ class Test extends React.Component
 	}
 
 	clickOnNeuron(e){
+		let tempNeurons = []
 		if(this.state.isShiftSelecting === true){
 			if(e.target.hasName("neuron")){
 				e.target.attrs.stroke="#0284C7"
 				e.target.attrs.strokeWidth=5
 				var obj = e.target.parent;
 				var temp = [...this.state.selectedNeurons]
-				if(!temp.includes(obj)){
-					temp.push(obj)
+				if(!temp.includes(obj.children[2].attrs.text)){
+					temp.push(obj.children[2].attrs.text)
 				}
 				this.setState(state => ({
 					selectedNeurons:temp
@@ -183,59 +198,85 @@ class Test extends React.Component
 			}
 		}
 		else if (e.target.hasName("neuron")){
-				this.state.selectedNeurons.forEach((item) => {
-					if(item._id !== e.target.parent._id)
-						item.children[0].setStroke("white")}
-					)
-				e.target.attrs.stroke="#0284C7"
-				e.target.attrs.strokeWidth=5
-				var neuron = e.target.parent;
-				var array = []
-				array.push(neuron)
-				this.setState(state => ({
-					selectedNeurons:array
-				}))
-
+					tempNeurons = this.stageRef.current.find(node => node.attrs.name==="neuron")
+					tempNeurons.forEach(neuron => {
+						if(neuron.attrs.id !== "ignore" && neuron._id !== e.target._id){
+							neuron.setStroke("white")
+						}
+					})
+					e.target.attrs.stroke="#0284C7"
+					e.target.attrs.strokeWidth=5
+					var neuron = e.target.parent;
+					var array = []
+					array.push(neuron.children[2].attrs.text)
+					this.setState(state => ({
+						selectedNeurons:array
+					}))
 		}
 	}
 
-	updateNeuralLayeraHeight(){
-
-	}
 
 	handleKeyPress(e){
 		let selectNeurons = [...this.state.selectedNeurons]
-		let allNeurons = this.state.neurons
+		let allNeurons = [...this.state.neurons]
+		let nLayers = [...this.state.nLayers]
 		let allConnections = [...this.state.connections]
 		if(e.code === "Delete"){
-			selectNeurons.forEach((item,array) => {
-				allNeurons.forEach((neuron, index, array) => {
-					if(item.parent.children[1].children[2].attrs.text.split("id: ")[1] === neuron.id){
-						allConnections.forEach((conn, index, array) => {
-							if(conn.sourceId === neuron.id){						
-								array.splice(array.indexOf(conn), 1)
-							}else if(conn.targetId === neuron.id){
-								array.splice(array.indexOf(conn), 1)
-							}
-						})
-						array.splice(array.indexOf(neuron), 1)
-					}
+
+			// 					allConnections.forEach((conn, index, conns) => {
+			// 						if(conn.sourceId === neuron.id){						
+			// 							conns.splice(conns.indexOf(conn), 1)
+			// 						}else if(conn.targetId === neuron.id){
+			// 							conns.splice(conns.indexOf(conn), 1)
+			// 						}
+			// 					})
+			// 					neurons.splice(neurons.indexOf(neuron), 1)
+				selectNeurons.forEach((item) =>{
+					allNeurons.forEach((neuron, index, neurons) =>{
+						if(neuron.id === item.split("id: ")[1]){
+							nLayers.forEach(layer => {
+								if(neuron.layerId === layer.id){
+									layer.neuronCount -= 1
+								}
+							})
+							// allConnections.forEach((conn, connIndex, conns) => {
+							// 	if(conn.sourceId === neuron.id){
+							// 		conns.splice(connIndex, 1)
+							// 	}else if(conn.targetId === neuron.id){
+							// 		conns.splice(connIndex, 1)
+							// 	}
+							// })
+							allConnections.length = 0
+							neurons.splice(neurons.indexOf(neuron), 1)
+							let toDelete = this.stageRef.current.find(node => node.attrs.text === item)
+							let parent = toDelete[0].parent.parent
+							toDelete.forEach(del => del.parent.destroy())
+							toDelete.forEach(del => parent.children.forEach((toMove,index) => {
+								if(index !== 0){
+									toMove.offsetY(index === 1?-5:-60*(index-1))
+								}
+							}))
+						}
+					})
 				})
-				item.destroy()
-			})
 			selectNeurons.length = 0
 			this.setState(state => ({
 				neurons:allNeurons
 			}))
-		}else if(e.key === "Shift")
+		}else if(e.key === "Shift"){
 			this.setState( state => ({
 				isShiftSelecting: true
-			}))		
+			}))	
+		}
+	
 		this.setState(state => ({
 			selectedNeurons:selectNeurons
 		}))
 		this.setState(state => ({
 			connections: allConnections
+		}))
+		this.setState(state => ({
+			nLayers:nLayers
 		}))
 	}
 
@@ -253,8 +294,10 @@ class Test extends React.Component
 	addMiddleLayer(){
 		let layers = [...this.state.nLayers]
 		layers.splice(layers.length - 1, 0, {
-			type:"middle"
+			type:"middle",
+			neuronCount:0
 		})
+		layers.forEach((item, index) => item.id = index)
 		this.setState(
 			state => ({
 				nLayers:layers
@@ -313,18 +356,18 @@ class Test extends React.Component
 		onAccordionItemSelect={this.onAccordionItemSelect} setBaseType={this.setBaseType} currentSelected={this.state.currentAccordionItemType}/>
 		let selectorBox = this.state.isDragging?<Rect x={this.state.selectorBoxX} y={this.state.selectorBoxY}
 		height={this.state.dragBoxHeight} stroke="#D1D5DB" width={this.state.dragBoxWidth} />:null
-		let neuralLayers = this.state.nLayers.map((item, index) => <NeuralLayer offsetX={(index+1) * -350} offsetY={-100} totalNumberOfNeurons={this.state.totalNumberOfNeurons} type={item.type} 
-			addNeuron={this.addNeuron} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} id={index}/>)		
+		let neuralLayers = this.state.nLayers.map((item, index) => <NeuralLayer offsetX={(index+1) * -350} offsetY={-100} type={item.type} 
+			addNeuron={this.addNeuron} neuronCount={item.neuronCount} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} layerId={index}/>)		
 		let fullyConnectButtons = this.state.nLayers.map((item, index) => {
 				if(item.type !== "output")
 					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection}/>}
 			)
-		let connections = this.state.connections.map((item, index) => <Line stroke="#9CA3AF" x={item.x} y={item.y} points={item.points} strokeWidth={5}/>)
+		let connections = this.state.connections.map((item, index) => <Line stroke="#9CA3AF" x={item.x} y={item.y} points={item.points} strokeWidth={3.5} sourceId={item.sourceId} targetId={item.targetId}/>)
 		return(
 			<Stage width={window.innerWidth} height={window.innerHeight} onMouseDown={this.onBoxDragStart} onMouseUp={this.onBoxDragEnd} ref={this.stageRef} onMouseMove={this.onBoxMove}>
 				<Layer draggable={!this.state.isDragging} onWheel={this.zoom} scaleX={this.state.layerScaleX} scaleY={this.state.layerScaleX}>
 				<Group ref={this.neuronRef}>
-					<Rect height={50} width={130} stroke="white" cornerRadius={5} opacity={0.40} name="neuron"/>
+					<Rect height={50} width={130} stroke="white" cornerRadius={5} opacity={0.40} name="neuron" id="ignore"/>
 					<Text wrap="char" width={130} fill="white" listening={false} offsetX={-20} offsetY={-15} />
 					<Text wrap="char" width={130} fill="white" listening={false} offsetX={-20} offsetY={-25} />
 				</Group>

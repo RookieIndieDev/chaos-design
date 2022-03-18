@@ -5,7 +5,6 @@ class NeuralLayer extends React.Component{
 	constructor(props){
 		super(props)
 		this.state = {
-			neuronCount:0,
 			hovering:false
 		}
 		this.groupRef = React.createRef()
@@ -14,10 +13,7 @@ class NeuralLayer extends React.Component{
 
 	onClick(e){
 		if(this.props.currentSelected !== "" && this.props.type === this.props.baseType){
-			this.props.addNeuron(e, this.state.neuronCount)
-			this.setState(state => ({
-				neuronCount: state.neuronCount+1
-			}))	
+			this.props.addNeuron(e)
 		}
 	}
 
@@ -38,8 +34,8 @@ class NeuralLayer extends React.Component{
 		}
 		return(
 
-			<Group ref={this.groupRef} offsetX={this.props.offsetX} offsetY={this.props.offsetY}>
-				<Rect height={this.state.neuronCount > 0? this.state.neuronCount * 60:60} width={220} stroke={strokeColor} cornerRadius={5} name="neuralLayer" 
+			<Group ref={this.groupRef} offsetX={this.props.offsetX} offsetY={this.props.offsetY} id={this.props.layerId}>
+				<Rect height={this.props.neuronCount > 0? this.props.neuronCount * 60:60} width={220} stroke={strokeColor} cornerRadius={5} name="neuralLayer" 
 				opacity={this.state.hovering?0.5:0.1} 
 				onMouseEnter={() => this.setState(state => ({hovering: true}))} 
 				onMouseLeave={() => this.setState(state => ({hovering: false}))}
