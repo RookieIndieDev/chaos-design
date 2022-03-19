@@ -8,6 +8,7 @@ class SidePane extends React.Component{
 		this.state={
 			isSidePaneVisible:false,
 			selectedId:"",
+			prevId:" ",
 			outputAccordionY:-100,
 			middleAccordionY:-50,
 			inputAccordionY:0
@@ -23,6 +24,8 @@ class SidePane extends React.Component{
 	}
 
 	selectItem(e){
+		if(this.state.prevId === "")
+			this.setState(state => ({prevId:e.target.attrs.name}))
 		this.setState(state=>({
 			selectedId:e.target.attrs.name
 		}))
@@ -30,26 +33,35 @@ class SidePane extends React.Component{
 	}
 
 	updateOffsets(){
-		if(this.state.selectedId === "input"){
+		if(this.state.prevId === this.state.selectedId){
+			this.setState(state => ({selectedId:""}))
+			this.setState(state =>({
+				middleAccordionY:-50,
+				outputAccordionY:-100,
+			}))
+		}else if(this.state.selectedId === "input"){
 			var outputOffset=this.props.inputNeurons.length * -95;
 			var middleOffset=this.props.inputNeurons.length * -80;
 			this.setState(state => ({
 				outputAccordionY:outputOffset,
-				middleAccordionY:middleOffset
+				middleAccordionY:middleOffset,
+				prevId:"input"
 			}))
 			this.props.setBaseType("input")
 		}else if(this.state.selectedId === "middle"){
 			outputOffset=this.props.middleNeurons.length * -90
 			this.setState(state => ({
 				outputAccordionY:outputOffset,
-				middleAccordionY:-50
+				middleAccordionY:-50,
+				prevId:"middle"
 			}))
 			this.props.setBaseType("middle")
-		}else{
+		}else if(this.state.selectedId === "output"){
 			middleOffset=-50
 			this.setState(state =>({
 				middleAccordionY:middleOffset,
-				outputAccordionY:-100
+				outputAccordionY:-100,
+				prevId:"output"
 			}))
 			this.props.setBaseType("output")
 		}

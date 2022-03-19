@@ -111,7 +111,6 @@ class Test extends React.Component
 			baseType:type
 		}))
 	}
-
 	zoom(e){
 		var scale = this.state.layerScaleX
 		if(e.evt.deltaY < 0){
@@ -225,40 +224,16 @@ class Test extends React.Component
 		let prevLayer
 		let nextLayer
 		if(e.code === "Delete"){
+				allConnections.length = 0
+				this.setState(state => ({connections: allConnections}))
 				selectNeurons.forEach((item) =>{
 					allNeurons.forEach((neuron, index, neurons) =>{
 						if(neuron.id === item.split("id: ")[1]){
 							nLayers.forEach(layer => {
 								if(neuron.layerId === layer.id){
 									layer.neuronCount -= 1
-									if(layer.type === "input"){
-										prevLayer = this.stageRef.current.find(node => {
-											return node.attrs.id === layer.id
-										})
-										nextLayer = this.stageRef.current.find(node => {
-											return node.attrs.id === layer.id+1
-										})
-									}else if(layer.type === "middle"){
-											prevLayer = this.stageRef.current.find(node => {
-												return node.attrs.id === layer.id-1
-											})
-											nextLayer = this.stageRef.current.find(node => {
-												return node.attrs.id === layer.id
-											})
-										}
-									}else{
-										prevLayer = this.stageRef.current.find(node => {
-											return node.attrs.id === layer.id-1
-										})
-										nextLayer = this.stageRef.current.find(node => {
-											return node.attrs.id === layer.id
-										})
-
-
 								}
 							})
-							allConnections.length = 0
-							this.setState(state => ({connections: allConnections}))
 							removedNeurons = neurons.splice(neurons.indexOf(neuron), 1)
 							let toDelete = this.stageRef.current.find(node => node.attrs.text === item)
 							let parent = toDelete[0].parent.parent
@@ -271,6 +246,53 @@ class Test extends React.Component
 						}
 					})
 				})
+			nLayers.forEach(layer => {
+				if(layer.type === "input"){
+					prevLayer = this.stageRef.current.find(node => {
+						return node.attrs.id === layer.id
+					})
+					nextLayer = this.stageRef.current.find(node => {
+						return node.attrs.id === layer.id+1
+					})
+				}else{
+					prevLayer = this.stageRef.current.find(node => {
+						return node.attrs.id === layer.id-1
+					})
+					nextLayer = this.stageRef.current.find(node => {
+						return node.attrs.id === layer.id
+					})
+				}
+				if(nextLayer[0] !== undefined){
+					let dependencies = []
+					let neurons = []
+					prevLayer[0].children.forEach(item => {
+						if(item.attrs.name !== "neuralLayer"){
+							let dependency = {}
+							dependency.neuronId = item.children[2].attrs.text.split(": ")[1]
+							dependency.weight = Math.random() * (10) - 5 
+							dependencies.push(dependency)
+						}
+					})
+					nextLayer[0].children.forEach(item => {
+						if(item.attrs.name !== "neuralLayer"){
+							let neuron = {}
+							neuron.neuronId = item.children[2].attrs.text.split(": ")[1]
+							neurons.push(neuron)
+						}
+					})
+					prevLayer[0].children.forEach(dep => {
+						if(dep.attrs.name !== "neuralLayer"){
+							nextLayer[0].children.forEach(neuron => {
+								if(neuron.attrs.name !== "neuralLayer"){
+									this.makeConnection(dep, neuron)
+								}
+							})
+						}
+					})
+					this.fullyConnectLayers(dependencies, neurons)
+				}
+			})
+
 			selectNeurons.length = 0
 			removedNeurons.forEach(removedNeuron => {
 				allNeurons.forEach(neuron => {
@@ -281,38 +303,6 @@ class Test extends React.Component
 					})
 				})
 			})
-			if(nextLayer[0] !== undefined){
-				let dependencies = []
-				let neurons = []
-				prevLayer[0].children.forEach(item => {
-					if(item.attrs.name !== "neuralLayer"){
-						let dependency = {}
-						dependency.neuronId = item.children[2].attrs.text.split(": ")[1]
-						dependency.weight = Math.random() * (10) - 5 
-						dependencies.push(dependency)
-					}
-				})
-				nextLayer[0].children.forEach(item => {
-					if(item.attrs.name !== "neuralLayer"){
-						let neuron = {}
-						neuron.neuronId = item.children[2].attrs.text.split(": ")[1]
-						neurons.push(neuron)
-					}
-				})
-				prevLayer[0].children.forEach(dep => {
-					if(dep.attrs.name !== "neuralLayer"){
-						nextLayer[0].children.forEach(neuron => {
-							if(neuron.attrs.name !== "neuralLayer"){
-								this.makeConnection(dep, neuron)
-							}
-						})
-					}
-				})
-				this.fullyConnectLayers(dependencies, neurons)
-			}else{
-
-			}
-
 
 		}else if(e.key === "Shift"){
 			this.setState( state => ({
@@ -364,7 +354,6 @@ class Test extends React.Component
 	}
 
 	fullyConnectLayers(dependencies, neurons){
-
 		let currentNeurons = [...this.state.neurons]
 		for(let i = 0; i < dependencies.length; i++){
 			for(let j = 0; j < neurons.length; j++){
@@ -425,8 +414,8 @@ class Test extends React.Component
 				<Layer draggable={!this.state.isDragging} onWheel={this.zoom} scaleX={this.state.layerScaleX} scaleY={this.state.layerScaleX}>
 				<Group ref={this.neuronRef}>
 					<Rect height={50} width={130} stroke="white" cornerRadius={5} opacity={0.40} name="neuron" id="ignore"/>
-					<Text wrap="char" width={130} fill="white" listening={false} offsetX={-20} offsetY={-15} />
-					<Text wrap="char" width={130} fill="white" listening={false} offsetX={-20} offsetY={-25} />
+					<Text wrap="none" width={130} fill="white" listening={false} offsetX={-20} offsetY={-15} width={50} ellipsis={true}/>
+					<Text wrap="char" width={130} fill="white" listening={false} offsetX={-20} offsetY={-25}/>
 				</Group>
 					<Group>
 						<Rect width={window.innerWidth * 4} height={window.innerHeight * 4} x={0} y={0} cornerRadius={5} opacity={0.05} name="layer" fill="gray"/>

@@ -463,10 +463,6 @@
       "$DEFAULT": "true"
     },
     {
-      "$TYPE": "WalkSidewaysOutput",
-      "$DEFAULT": "true"
-    },
-    {
       "$TYPE": "UseRawOutputNeuron",
       "$DEFAULT": "true"
     },
