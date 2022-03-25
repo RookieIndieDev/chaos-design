@@ -11,10 +11,12 @@ class SidePane extends React.Component{
 			prevId:" ",
 			outputAccordionY:-100,
 			middleAccordionY:-50,
-			inputAccordionY:0
+			inputAccordionY:0,
+			contentOffsetY:-100
 		}
 		this.toggleSidePane = this.toggleSidePane.bind(this)
 		this.selectItem = this.selectItem.bind(this)
+		this.scroll = this.scroll.bind(this)
 	}
 
 	toggleSidePane(){
@@ -27,14 +29,17 @@ class SidePane extends React.Component{
 		if(this.state.prevId === "")
 			this.setState(state => ({prevId:e.target.attrs.name}))
 		this.setState(state=>({
-			selectedId:e.target.attrs.name
+			selectedId:e.target.attrs.name,
+			contentOffsetY:-100
 		}))
 		this.updateOffsets()
 	}
 
 	updateOffsets(){
 		if(this.state.prevId === this.state.selectedId){
-			this.setState(state => ({selectedId:""}))
+			this.setState(state => ({selectedId:"",
+				prevId:" "
+		}))
 			this.setState(state =>({
 				middleAccordionY:-50,
 				outputAccordionY:-100,
@@ -67,11 +72,30 @@ class SidePane extends React.Component{
 		}
 	}
 
+	scroll(e){
+		if(this.state.isSidePaneVisible){
+			if(e.evt.deltaY < 0){
+				this.setState(state => ({
+					contentOffsetY:Math.max(state.contentOffsetY -20, -150)
+				}))
+			}else{
+				//up
+				this.setState(state => ({
+					contentOffsetY:Math.min(state.contentOffsetY + 20, 50 * this.props.inputNeurons.length)
+				}))
+			}
+		}
+	}
+
 	render(){
 		var opacity = this.state.isSidePaneVisible?0.5:0
-		var text =  this.state.isSidePaneVisible?<Text text="ChaosDesign" fill="white" offsetX={-10} offsetY={-20} fontSize={35} fontStyle="bold" fontFamily="Calibri"/>:null
+		var text = this.state.isSidePaneVisible?<Text text="ChaosDesign" fill="white" offsetX={-10} offsetY={-20} fontSize={35} fontStyle="bold" fontFamily="Calibri"/>:null
+		let titleSection = this.state.isSidePaneVisible?<Rect height={65} fill="#6366F1" width={this.state.isSidePaneVisible?300:50} shadowColor="black"
+						shadowOffsetX={15} 
+						shadowBlur={50}
+						shadowOpacity={opacity}/>:null
 		var contents = this.state.isSidePaneVisible?
-			<Group offsetX={-10} offsetY={-100}>
+			<Group offsetX={-10} offsetY={this.state.contentOffsetY}>
 					<Accordion text="Inputs" offsetY={this.state.inputAccordionY} items={this.props.inputNeurons} 
 					id="input" selectedId={this.state.selectedId} selectItem={this.selectItem} onAccordionSelect={this.props.onAccordionItemSelect} 
 					currentSelected={this.props.currentSelected}/>
@@ -94,8 +118,9 @@ class SidePane extends React.Component{
 						shadowOffsetX={15} 
 						shadowBlur={50}
 						shadowOpacity={opacity} 
-						onClick={this.toggleSidePane} name="sidePane"/>
+						onClick={this.toggleSidePane} name="sidePane" onWheel={this.scroll}/>
 				{contents}
+				{titleSection}
 				{text}
 			</Group>
 			)

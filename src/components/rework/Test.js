@@ -6,6 +6,7 @@ import NeuralLayer from './NeuralLayer/NeuralLayer.js'
 import Simmodel from '../../chaosnet/terrariaSimmodel.json'
 import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
 import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer.js'
+import NeuronInfo from './NeuronInfo/NeuronInfo.js'
 
 class Test extends React.Component
 {
@@ -103,6 +104,16 @@ class Test extends React.Component
 		neuron.children[1].text(this.state.currentAccordionItemType)
 		neuron.children[2].text("id: neuron-"+this.state.totalNumberOfNeurons)
 		neuron.children[0].attrs.id =" "
+		switch(this.state.baseType){
+			case "input":
+				neuron.attrs.keys = Object.keys(Simmodel.inputNeurons.find(neuron => neuron.$TYPE === this.state.currentAccordionItemType)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+				break;
+			case "output":
+				neuron.attrs.keys = Object.keys(Simmodel.outputNeurons.find(neuron => neuron.$TYPE === this.state.currentAccordionItemType)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+				break;
+			default:
+				break;
+		}
 		neuralLayer.add(neuron)
 	}
 
@@ -414,7 +425,7 @@ class Test extends React.Component
 				<Layer draggable={!this.state.isDragging} onWheel={this.zoom} scaleX={this.state.layerScaleX} scaleY={this.state.layerScaleX}>
 				<Group ref={this.neuronRef}>
 					<Rect height={50} width={130} stroke="white" cornerRadius={5} opacity={0.40} name="neuron" id="ignore"/>
-					<Text wrap="none" width={130} fill="white" listening={false} offsetX={-20} offsetY={-15} width={50} ellipsis={true}/>
+					<Text wrap="none" fill="white" listening={false} offsetX={-20} offsetY={-15} width={50} ellipsis={true}/>
 					<Text wrap="char" width={130} fill="white" listening={false} offsetX={-20} offsetY={-25}/>
 				</Group>
 					<Group>
@@ -433,6 +444,9 @@ class Test extends React.Component
 				<Layer>
 					<AddMiddleLayer addMiddleLayer={this.addMiddleLayer}/>
 				</Layer>
+{/*				<Layer>
+					<NeuronInfo />
+				</Layer>*/}
 			</Stage>
 			)
 	}
