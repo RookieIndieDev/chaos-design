@@ -36,7 +36,9 @@ class Test extends React.Component
 				neuronCount:0,
 				id:1
 			}],
-			connections:[]
+			connections:[],
+			rightClickedNeuron:"",
+			rightClickedNeuronKeys:[]
 		}
 		this.zoom = this.zoom.bind(this)
 		this.onBoxDragStart = this.onBoxDragStart.bind(this)
@@ -51,6 +53,8 @@ class Test extends React.Component
 		this.addMiddleLayer = this.addMiddleLayer.bind(this)
 		this.fullyConnectLayers = this.fullyConnectLayers.bind(this)
 		this.makeConnection = this.makeConnection.bind(this)
+		this.onNeuronRightClick = this.onNeuronRightClick.bind(this)
+		this.closeInfo = this.closeInfo.bind(this)
 		this.stageRef = React.createRef()
 		this.neuronRef = React.createRef()
 	}
@@ -101,6 +105,7 @@ class Test extends React.Component
 		neuron.children[0].attrs.fill = color
 		neuron.attrs.baseType = this.state.baseType+"neuron"
 		neuron.children[0].on('click', this.clickOnNeuron)
+		neuron.children[0].on('contextmenu', this.onNeuronRightClick)
 		neuron.children[1].text(this.state.currentAccordionItemType)
 		neuron.children[2].text("id: neuron-"+this.state.totalNumberOfNeurons)
 		neuron.children[0].attrs.id =" "
@@ -122,6 +127,7 @@ class Test extends React.Component
 			baseType:type
 		}))
 	}
+
 	zoom(e){
 		var scale = this.state.layerScaleX
 		if(e.evt.deltaY < 0){
@@ -136,22 +142,24 @@ class Test extends React.Component
 
 	//Rename this
 	onBoxDragStart(e){
-		if(e.target.hasName("neuralLayer") && !e.target.hasName("sidePane")){
-			var pos = this.stageRef.current.getPointerPosition()
-			this.setState(state => ({
-				selectorBoxX:pos.x,
-				selectorBoxY:pos.y,
-				isDragging: true
-			}))
-		}
-		this.highlightAndSelectNeuron(e)
-		if(e.target.hasName("layer") && this.state.selectedNeurons.length > 0){
-			let tempNeurons = this.stageRef.current.find(node => node.attrs.name==="neuron")
-			tempNeurons.forEach(neuron => {
-				if(neuron.attrs.id !== "ignore"){
-					neuron.setStroke("white")
-				}
-			})
+		if(e.evt.button === 0){
+			if(e.target.hasName("neuralLayer") && !e.target.hasName("sidePane")){
+				var pos = this.stageRef.current.getPointerPosition()
+				this.setState(state => ({
+					selectorBoxX:pos.x,
+					selectorBoxY:pos.y,
+					isDragging: true
+				}))
+			}
+			this.highlightAndSelectNeuron(e)
+			if(e.target.hasName("layer") && this.state.selectedNeurons.length > 0){
+				let tempNeurons = this.stageRef.current.find(node => node.attrs.name==="neuron")
+				tempNeurons.forEach(neuron => {
+					if(neuron.attrs.id !== "ignore"){
+						neuron.setStroke("white")
+					}
+				})
+			}
 		}
 	}
 
@@ -193,38 +201,48 @@ class Test extends React.Component
 
 	clickOnNeuron(e){
 		let tempNeurons = []
-		if(this.state.isShiftSelecting === true){
-			if(e.target.hasName("neuron")){
-				e.target.attrs.stroke="#0284C7"
-				e.target.attrs.strokeWidth=5
-				var obj = e.target.parent;
-				var temp = [...this.state.selectedNeurons]
-				if(!temp.includes(obj.children[2].attrs.text)){
-					temp.push(obj.children[2].attrs.text)
-				}
-				this.setState(state => ({
-					selectedNeurons:temp
-				}))
-			}
-		}
-		else if (e.target.hasName("neuron")){
-					tempNeurons = this.stageRef.current.find(node => node.attrs.name==="neuron")
-					tempNeurons.forEach(neuron => {
-						if(neuron.attrs.id !== "ignore" && neuron._id !== e.target._id){
-							neuron.setStroke("white")
-						}
-					})
+		if(e.evt.button === 0){
+			if(this.state.isShiftSelecting === true){
+				if(e.target.hasName("neuron")){
 					e.target.attrs.stroke="#0284C7"
 					e.target.attrs.strokeWidth=5
-					var neuron = e.target.parent;
-					var array = []
-					array.push(neuron.children[2].attrs.text)
+					var obj = e.target.parent;
+					var temp = [...this.state.selectedNeurons]
+					if(!temp.includes(obj.children[2].attrs.text)){
+						temp.push(obj.children[2].attrs.text)
+					}
 					this.setState(state => ({
-						selectedNeurons:array
+						selectedNeurons:temp
 					}))
+				}
+			}
+			else if (e.target.hasName("neuron")){
+						tempNeurons = this.stageRef.current.find(node => node.attrs.name==="neuron")
+						tempNeurons.forEach(neuron => {
+							if(neuron.attrs.id !== "ignore" && neuron._id !== e.target._id){
+								neuron.setStroke("white")
+							}
+						})
+						e.target.attrs.stroke="#0284C7"
+						e.target.attrs.strokeWidth=5
+						var neuron = e.target.parent;
+						var array = []
+						array.push(neuron.children[2].attrs.text)
+						this.setState(state => ({
+							selectedNeurons:array
+						}))
+			}
 		}
 	}
 
+	onNeuronRightClick(e){
+		e.evt.preventDefault()
+		if(e.target.hasName("neuron")){
+			this.setState(state => ({rightClickedNeuron:e.target.parent.children[2].attrs.text,
+				rightClickedNeuronKeys:e.target.parent.attrs.keys
+			}))
+		}
+	}
 
 	handleKeyPress(e){
 		let selectNeurons = [...this.state.selectedNeurons]
@@ -332,6 +350,12 @@ class Test extends React.Component
 		}))
 	}
 
+	closeInfo(){
+		this.setState(state => ({
+			rightClickedNeuron:"",
+			rightClickedNeuronKeys:[]
+		}))
+	}
 
 	onKeyUp(e){
 		if(e.key === "Shift"){
@@ -340,7 +364,6 @@ class Test extends React.Component
 			}))
 		}
 	}
-
 
 	//Adding middle layers after adding output neurons screws things up somehow. Need to fix
 	addMiddleLayer(){
@@ -420,6 +443,7 @@ class Test extends React.Component
 					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection}/>}
 			)
 		let connections = this.state.connections.map((item, index) => <Line stroke="#9CA3AF" x={item.x} y={item.y} points={item.points} strokeWidth={3.5} sourceId={item.sourceId} targetId={item.targetId}/>)
+		let infoScreen = this.state.rightClickedNeuron !== ""?<Layer><NeuronInfo selected={this.state.rightClickedNeuron} keys={this.state.rightClickedNeuronKeys} close={this.closeInfo}/></Layer>:null
 		return(
 			<Stage width={window.innerWidth} height={window.innerHeight} onMouseDown={this.onBoxDragStart} onMouseUp={this.onBoxDragEnd} ref={this.stageRef} onMouseMove={this.onBoxMove}>
 				<Layer draggable={!this.state.isDragging} onWheel={this.zoom} scaleX={this.state.layerScaleX} scaleY={this.state.layerScaleX}>
@@ -444,9 +468,7 @@ class Test extends React.Component
 				<Layer>
 					<AddMiddleLayer addMiddleLayer={this.addMiddleLayer}/>
 				</Layer>
-{/*				<Layer>
-					<NeuronInfo />
-				</Layer>*/}
+				{infoScreen}
 			</Stage>
 			)
 	}
