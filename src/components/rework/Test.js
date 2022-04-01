@@ -3,7 +3,7 @@ import { Stage, Layer, Rect, Text, Group, Line } from 'react-konva';
 import React from "react";
 import SidePane from './Sidepane/SidePane.js'
 import NeuralLayer from './NeuralLayer/NeuralLayer.js'
-import Simmodel from '../../chaosnet/terrariaSimmodel.json'
+import Simmodel from '../../chaosnet/chaoscraftDiscoverySimmodel.json'
 import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
 import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer.js'
 import NeuronInfo from './NeuronInfo/NeuronInfo.js'
