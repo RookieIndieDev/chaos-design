@@ -8,6 +8,7 @@ import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
 import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer.js'
 import NeuronInfo from './NeuronInfo/NeuronInfo.js'
 
+//Rename this component to Main when done
 class Test extends React.Component
 {
 	constructor(){
@@ -252,7 +253,11 @@ class Test extends React.Component
 		let removedNeurons = []
 		let prevLayer
 		let nextLayer
+
 		if(e.code === "Delete"){
+				this.setState(state => ({
+						totalNumberOfNeurons:state.totalNumberOfNeurons === selectNeurons.length?0:state.totalNumberOfNeurons
+				}))
 				allConnections.length = 0
 				this.setState(state => ({connections: allConnections}))
 				selectNeurons.forEach((item) =>{
@@ -321,7 +326,6 @@ class Test extends React.Component
 					this.fullyConnectLayers(dependencies, neurons)
 				}
 			})
-
 			selectNeurons.length = 0
 			removedNeurons.forEach(removedNeuron => {
 				allNeurons.forEach(neuron => {
