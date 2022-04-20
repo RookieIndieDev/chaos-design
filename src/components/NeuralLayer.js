@@ -42,7 +42,7 @@ class NeuralLayer extends React.Component
 					  	shadowOffsetY={6}
 					  	shadowBlur={5}
 					  	onClick={(e) => this.onLayerClick(e)}
-					  	id={this.props.id}
+					  	layerId={this.props.layerId}
 					 />
 				  	</Group>
 			)

@@ -11,7 +11,7 @@ class AddMiddleLayer extends React.Component
 		this.onClick = this.onClick.bind(this);
 	}
 
-	onClick(){
+	onClick(e){
 		this.props.addMiddleLayer()
 	}
 

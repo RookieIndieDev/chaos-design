@@ -39,7 +39,7 @@ class Test extends React.Component
 			}],
 			connections:[],
 			rightClickedNeuron:"",
-			rightClickedNeuronKeys:[]
+			rightClickedNeuronKeys:[],
 		}
 		this.zoom = this.zoom.bind(this)
 		this.onBoxDragStart = this.onBoxDragStart.bind(this)
@@ -82,7 +82,7 @@ class Test extends React.Component
 		}))
 
 		tempNeurons.push({$TYPE:this.state.currentAccordionItemType, _base_type:this.state.baseType, 
-			id:"neuron-"+this.state.totalNumberOfNeurons, weight:Math.random() * (10) - 5, dependencies:[], layerId:neuralLayer.attrs.id})
+			id:"neuron-"+this.state.totalNumberOfNeurons, dependencies:[], layerId:neuralLayer.attrs.id})
 		this.setState(state => ({
 			neurons:tempNeurons
 		}))
@@ -109,7 +109,7 @@ class Test extends React.Component
 		neuron.children[0].on('contextmenu', this.onNeuronRightClick)
 		neuron.children[1].text(this.state.currentAccordionItemType)
 		neuron.children[2].text("id: neuron-"+this.state.totalNumberOfNeurons)
-		neuron.children[0].attrs.id =" "
+		neuron.children[0].attrs.id = "neuron-"+this.state.totalNumberOfNeurons
 		switch(this.state.baseType){
 			case "input":
 				neuron.attrs.keys = Object.keys(Simmodel.inputNeurons.find(neuron => neuron.$TYPE === this.state.currentAccordionItemType)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
@@ -376,11 +376,17 @@ class Test extends React.Component
 			type:"middle",
 			neuronCount:0
 		})
-		layers.forEach((item, index) => item.id = index)
+		layers.forEach((item, index) => {item.id = index
+		})
 		this.setState(
 			state => ({
 				nLayers:layers
-	}))
+		}))
+		let outputGroup = this.stageRef.current.find(node => node.attrs.id === layers.length-1)[0]
+		let outputNeurons = this.stageRef.current.find(node => node.attrs.baseType === "outputneuron")
+		outputNeurons.forEach(item => {
+			outputGroup.add(item)
+		})
 	}
 
 	componentDidMount(){
@@ -441,7 +447,7 @@ class Test extends React.Component
 		let selectorBox = this.state.isDragging?<Rect x={this.state.selectorBoxX} y={this.state.selectorBoxY}
 		height={this.state.dragBoxHeight} stroke="#D1D5DB" width={this.state.dragBoxWidth} />:null
 		let neuralLayers = this.state.nLayers.map((item, index) => <NeuralLayer offsetX={(index+1) * -350} offsetY={-100} type={item.type} 
-			addNeuron={this.addNeuron} neuronCount={item.neuronCount} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} layerId={index}/>)		
+			addNeuron={this.addNeuron} neuronCount={item.neuronCount} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} layerId={index}/>)	
 		let fullyConnectButtons = this.state.nLayers.map((item, index) => {
 				if(item.type !== "output")
 					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection}/>}
