@@ -66,7 +66,6 @@ class Test extends React.Component
 		}))
 	}
 
-	//Remove weight generation for neurons, only used with something like BiasInput, not for every single neuron type.
 	addNeuron(e){
 		var neuralLayer = e.target.parent
 		var color = ""
@@ -369,7 +368,6 @@ class Test extends React.Component
 		}
 	}
 
-	//Adding middle layers after adding output neurons screws things up somehow. Need to fix
 	addMiddleLayer(){
 		let layers = [...this.state.nLayers]
 		layers.splice(layers.length - 1, 0, {
