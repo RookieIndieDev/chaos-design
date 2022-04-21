@@ -453,7 +453,7 @@ class Test extends React.Component
 					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection}/>}
 			)
 		let connections = this.state.connections.map((item, index) => <Line stroke="#9CA3AF" x={item.x} y={item.y} points={item.points} strokeWidth={3.5} sourceId={item.sourceId} targetId={item.targetId}/>)
-		let infoScreen = this.state.rightClickedNeuron !== ""?<Layer><NeuronInfo selected={this.state.rightClickedNeuron} keys={this.state.rightClickedNeuronKeys} close={this.closeInfo}/></Layer>:null
+		let infoScreen = this.state.rightClickedNeuron !== ""&&this.state.rightClickedNeuronKeys !== undefined?<Layer><NeuronInfo selected={this.state.rightClickedNeuron} keys={this.state.rightClickedNeuronKeys} close={this.closeInfo}/></Layer>:null
 		return(
 			<Stage width={window.innerWidth} height={window.innerHeight} onMouseDown={this.onBoxDragStart} onMouseUp={this.onBoxDragEnd} ref={this.stageRef} onMouseMove={this.onBoxMove}>
 				<Layer draggable={!this.state.isDragging} onWheel={this.zoom} scaleX={this.state.layerScaleX} scaleY={this.state.layerScaleX}>

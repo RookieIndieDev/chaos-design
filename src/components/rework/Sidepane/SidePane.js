@@ -89,13 +89,13 @@ class SidePane extends React.Component{
 
 	render(){
 		var opacity = this.state.isSidePaneVisible?0.5:0
-		var header = this.state.isSidePaneVisible?<Text text="ChaosDesign" fill="white" offsetX={-10} offsetY={-10} fontSize={35} fontStyle="bold" fontFamily="Calibri"/>:null
+		var header = this.state.isSidePaneVisible?<Text text="ChaosDesign" fill="white" offsetX={-20} offsetY={-20} fontSize={35} fontStyle="bold" fontFamily="Helvetica"/>:null
 		let titleSection = this.state.isSidePaneVisible?<Rect height={70} fill="#6366F1" width={this.state.isSidePaneVisible?300:50} shadowColor="black"
 						shadowOffsetX={15} 
 						shadowBlur={50}
 						shadowOpacity={opacity}/>:null
 		let scrollInstructions = this.state.isSidePaneVisible?<Text text="Use mouse wheel to scroll up and down" fill="white" 
-		offsetX={-20} offsetY={-900} fontSize={12} fontStyle="bold" fontFamily="Calibri" wrap="word" width={200}/>:null
+		offsetX={-20} offsetY={-900} fontSize={12} fontStyle="bold" fontFamily="Helvetica" wrap="word" width={200}/>:null
 		var contents = this.state.isSidePaneVisible?
 			<Group offsetX={-10} offsetY={this.state.contentOffsetY}>
 					<Accordion text="Inputs" offsetY={this.state.inputAccordionY} items={this.props.inputNeurons} 
