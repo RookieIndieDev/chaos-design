@@ -8,8 +8,7 @@ import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
 import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer.js'
 import NeuronInfo from './NeuronInfo/NeuronInfo.js'
 
-//Rename this component to Main when done
-class Test extends React.Component
+class Main extends React.Component
 {
 	constructor(){
 		super();
@@ -40,6 +39,7 @@ class Test extends React.Component
 			connections:[],
 			rightClickedNeuron:"",
 			rightClickedNeuronKeys:[],
+			selectedConnections:[]
 		}
 		this.zoom = this.zoom.bind(this)
 		this.onBoxDragStart = this.onBoxDragStart.bind(this)
@@ -56,6 +56,7 @@ class Test extends React.Component
 		this.makeConnection = this.makeConnection.bind(this)
 		this.onNeuronRightClick = this.onNeuronRightClick.bind(this)
 		this.closeInfo = this.closeInfo.bind(this)
+		this.connectionOnClick = this.connectionOnClick.bind(this)
 		this.stageRef = React.createRef()
 		this.neuronRef = React.createRef()
 	}
@@ -152,13 +153,18 @@ class Test extends React.Component
 				}))
 			}
 			this.highlightAndSelectNeuron(e)
-			if(e.target.hasName("layer") && this.state.selectedNeurons.length > 0){
-				let tempNeurons = this.stageRef.current.find(node => node.attrs.name==="neuron")
-				tempNeurons.forEach(neuron => {
-					if(neuron.attrs.id !== "ignore"){
-						neuron.setStroke("white")
-					}
-				})
+			if(e.target.hasName("layer")){
+				if(this.state.selectedNeurons.length > 0){
+					let tempNeurons = this.stageRef.current.find(node => node.attrs.name==="neuron")
+					tempNeurons.forEach(neuron => {
+						if(neuron.attrs.id !== "ignore"){
+							neuron.setStroke("white")
+						}
+					})
+				}else{
+					let connections = this.stageRef.current.find(node => node.attrs.name ==="connection")
+					connections.forEach(connection => connection.stroke("#9CA3AF"))
+				}
 			}
 		}
 	}
@@ -438,6 +444,29 @@ class Test extends React.Component
 
 	}
 
+	connectionOnClick(e){
+		let connIds = [...this.state.selectedConnections]
+		if(e.evt.button === 0){
+			if(this.state.isShiftSelecting === true){
+				connIds.push(e.target.attrs.id)
+				e.target.stroke("#06B6D4")
+			}
+			else{
+				connIds = [e.target.attrs.id]
+				let connections = this.stageRef.current.find( node => node.attrs.name ==="connection")
+				connections.forEach(connection => {
+					if(connection.attrs.id !== e.target.attrs.id){
+						connection.stroke("#9CA3AF")
+					}
+				})
+				e.target.stroke("#06B6D4")
+			}
+		}
+		this.setState(state => ({
+			selectedConnections:connIds
+		}))
+	}
+
 	render(){
 		//Need to implement Simmodel upload
 		let sidePane = <SidePane inputNeurons={Simmodel.inputNeurons} middleNeurons={Simmodel.activators} outputNeurons={Simmodel.outputNeurons} 
@@ -450,7 +479,9 @@ class Test extends React.Component
 				if(item.type !== "output")
 					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection}/>}
 			)
-		let connections = this.state.connections.map((item, index) => <Line stroke="#9CA3AF" x={item.x} y={item.y} points={item.points} strokeWidth={3.5} sourceId={item.sourceId} targetId={item.targetId}/>)
+		let connections = this.state.connections.map((item, index) => <Line stroke="#9CA3AF" x={item.x} y={item.y} points={item.points} strokeWidth={5.5} 
+			sourceId={item.sourceId} targetId={item.targetId} id={index} onClick={this.connectionOnClick} name="connection"
+			onMouseEnter={(e) => e.target.strokeWidth(10)} onMouseLeave={(e) => e.target.strokeWidth(5.5)} lineCap="round"/>)
 		let infoScreen = this.state.rightClickedNeuron !== ""&&this.state.rightClickedNeuronKeys !== undefined?<Layer><NeuronInfo selected={this.state.rightClickedNeuron} keys={this.state.rightClickedNeuronKeys} close={this.closeInfo}/></Layer>:null
 		return(
 			<Stage width={window.innerWidth} height={window.innerHeight} onMouseDown={this.onBoxDragStart} onMouseUp={this.onBoxDragEnd} ref={this.stageRef} onMouseMove={this.onBoxMove}>
@@ -482,4 +513,4 @@ class Test extends React.Component
 	}
 }
 
-export default Test;
+export default Main;

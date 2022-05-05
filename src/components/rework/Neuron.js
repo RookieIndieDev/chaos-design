@@ -1,6 +1,6 @@
 import React from 'react'
 import {Rect, Group, Text} from 'react-konva'
-
+//Remove?
 class Neuron extends React.Component{
 	constructor(props){
 		super()

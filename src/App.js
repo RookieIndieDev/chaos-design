@@ -1,11 +1,11 @@
 import './App.css';
 import './index.css';
-import Test from './components/rework/Test'
+import Main from './components/rework/Main'
 
 function App() {
   return (
     <div className="App">
-      <Test />
+      <Main />
     </div>
   );
 }
