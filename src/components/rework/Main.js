@@ -27,6 +27,7 @@ class Main extends React.Component
 			lastLayerId:2,
 			selectedNeurons:[],
 			isShiftSelecting:false,
+			ctrlDown:false,
 			nLayers:[{
 				type:"input",
 				neuronCount:0,
@@ -431,16 +432,18 @@ class Main extends React.Component
 		let neuronRect = neuron.getClientRect()
 		let X = depRect.x - neuronRect.x
 		let Y = depRect.y - neuronRect.y
-		temp.push({
+		let connection = {
 			x:depRect.x,
 			y:depRect.y+depRect.height/2,
 			points:[125, 0, -X, -Y],
 			sourceId:sourceId,
 			targetId:targetId
-		})
+		}
+		if(temp.find(conn => conn.sourceId === connection.sourceId && conn.targetId === connection.targetId) === undefined)
+			temp.push(connection)
 		this.setState(state => ({
 			connections:temp
-		}))
+		}), () => console.log(this.state.connections))
 
 	}
 
