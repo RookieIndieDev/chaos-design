@@ -12,9 +12,10 @@ class NeuralLayer extends React.Component{
 	}
 
 	onClick(e){
-		if(this.props.currentSelected !== "" && this.props.type === this.props.baseType){
+		if(!this.props.copied && this.props.currentSelected !== "" && this.props.type === this.props.baseType)
 			this.props.addNeuron(e)
-		}
+		else if(this.props.copied)
+			this.props.addCopiedNeurons(e)
 	}
 
 	render(){

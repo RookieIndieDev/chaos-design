@@ -94,7 +94,7 @@ class SidePane extends React.Component{
 						shadowOffsetX={15} 
 						shadowBlur={50}
 						shadowOpacity={opacity}/>:null
-		let scrollInstructions = this.state.isSidePaneVisible?<Text text="Use mouse wheel to scroll up and down. Click to toggle side pane" fill="white" 
+		let scrollInstructions = this.state.isSidePaneVisible?<Text text="Use mouse wheel to scroll up and down. Click any empty space to toggle side pane" fill="white" 
 		offsetX={-20} offsetY={-900} fontSize={12} fontStyle="bold" fontFamily="Helvetica" wrap="word" width={200}/>:null
 		var contents = this.state.isSidePaneVisible?
 			<Group offsetX={-10} offsetY={this.state.contentOffsetY}>

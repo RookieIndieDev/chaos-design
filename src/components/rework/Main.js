@@ -7,6 +7,7 @@ import Simmodel from '../../chaosnet/chaoscraftDiscoverySimmodel.json'
 import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
 import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer.js'
 import NeuronInfo from './NeuronInfo/NeuronInfo.js'
+import CopyNeuron from './CopyNeuron/CopyNeuron.js'
 
 class Main extends React.Component
 {
@@ -27,6 +28,9 @@ class Main extends React.Component
 			lastLayerId:2,
 			selectedNeurons:[],
 			isShiftSelecting:false,
+			ctrlC:false,
+			copyNeuronX:0,
+			copyNeuronY:0,
 			nLayers:[{
 				type:"input",
 				neuronCount:0,
@@ -57,6 +61,8 @@ class Main extends React.Component
 		this.onNeuronRightClick = this.onNeuronRightClick.bind(this)
 		this.closeInfo = this.closeInfo.bind(this)
 		this.connectionOnClick = this.connectionOnClick.bind(this)
+		this.addCopiedNeurons = this.addCopiedNeurons.bind(this)
+		this.updateNeuralInfo = this.updateNeuralInfo.bind(this)
 		this.stageRef = React.createRef()
 		this.neuronRef = React.createRef()
 	}
@@ -68,39 +74,20 @@ class Main extends React.Component
 	}
 
 	addNeuron(e){
-		var neuralLayer = e.target.parent
+		let neuralLayer = e.target.parent
 		var color = ""
 		var tempNeurons = [...this.state.neurons]
 		let allLayers = [...this.state.nLayers]
 		let neuronCount = allLayers.find((element,index) => index === neuralLayer.attrs.id).neuronCount
-		allLayers.find((element,index) => index === neuralLayer.attrs.id).neuronCount += 1
-		this.setState(state => ({
-			totalNumberOfNeurons:state.totalNumberOfNeurons+1
-		}))
-		this.setState(state => ({
-			nLayers:allLayers
-		}))
+		this.updateNeuralInfo(neuralLayer)
 
 		tempNeurons.push({$TYPE:this.state.currentAccordionItemType, _base_type:this.state.baseType, 
 			id:"neuron-"+this.state.totalNumberOfNeurons, dependencies:[], layerId:neuralLayer.attrs.id})
 		this.setState(state => ({
 			neurons:tempNeurons
 		}))
-		switch(this.state.baseType){
-			case "input":
-				color = "#10B981";
-			break;
-
-			case "middle":
-				color = "#0EA5E9";
-			break;
-
-			case "output":
-				color = "#4F46E5"
-			break;
-			default:
-			color=""
-		}
+		
+		color = this.setNeuronColor(this.state.baseType)
 		var y = neuronCount !== 0?-neuronCount * 60:-5
 		var neuron = this.neuronRef.current.clone({opacity:1, offsetX:-40, offsetY:y})
 		neuron.children[0].attrs.fill = color
@@ -121,6 +108,85 @@ class Main extends React.Component
 				break;
 		}
 		neuralLayer.add(neuron)
+	}
+
+	addCopiedNeurons(e){
+		let neurons = [...this.state.neurons]
+		let selectedNeurons = [...this.state.selectedNeurons]
+		let temp = []
+		let neuralLayer = e.target.parent
+		let allLayers = [...this.state.nLayers]
+		selectedNeurons.forEach(select => {
+			neurons.forEach(neuron => {
+				if(select === "id: " + neuron.id)
+					temp.push(neuron)
+			})
+		})
+		temp.forEach(select => {
+			if(select._base_type === e.target.attrs.baseType){
+				let neuronCount = allLayers.find((element,index) => index === neuralLayer.attrs.id).neuronCount
+				let y = neuronCount !== 0?-neuronCount * 60:-5
+				this.updateNeuralInfo(neuralLayer)
+				let neuron = this.neuronRef.current.clone({opacity:1, offsetX:-40, offsetY:y})
+				neuron.children[0].attrs.fill = this.setNeuronColor(select._base_type)
+				neuron.attrs.baseType = select._base_type+"neuron"
+				neuron.children[0].on('click', this.clickOnNeuron)
+				neuron.children[0].on('contextmenu', this.onNeuronRightClick)
+				neuron.children[1].text(select.$TYPE)
+				neuron.children[2].text("id: neuron-"+this.state.totalNumberOfNeurons)
+				neuron.children[0].attrs.id = "neuron-"+this.state.totalNumberOfNeurons
+				switch(select._base_type){
+					case "input":
+						neuron.attrs.keys = Object.keys(Simmodel.inputNeurons.find(neuron => neuron.$TYPE === select.$TYPE)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+						break;
+					case "output":
+						neuron.attrs.keys = Object.keys(Simmodel.outputNeurons.find(neuron => neuron.$TYPE === select.$TYPE)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+						break;
+					default:
+						break;
+				}
+				neuralLayer.add(neuron)
+				neurons.push({
+					$TYPE:select.$TYPE, _base_type:select._base_type, 
+					id:"neuron-"+this.state.totalNumberOfNeurons, dependencies:[], layerId:neuralLayer.attrs.id
+				})
+			}
+		})
+
+		this.setState(state => ({
+			neurons:neurons
+		}))
+	}
+
+	updateNeuralInfo(neuralLayer){
+		let allLayers = [...this.state.nLayers]
+		allLayers.find((element,index) => index === neuralLayer.attrs.id).neuronCount += 1
+		this.setState(state => ({
+			totalNumberOfNeurons:state.totalNumberOfNeurons+1
+		}))
+		this.setState(state => ({
+			nLayers:allLayers
+		}))
+	}
+
+	setNeuronColor(baseType){
+		let color=""
+		switch(baseType){
+			case "input":
+				color = "#10B981";
+			break;
+
+			case "middle":
+				color = "#0EA5E9";
+			break;
+
+			case "output":
+				color = "#4F46E5"
+			break;
+			default:
+			color=""
+		}
+		return color
 	}
 
 	setBaseType(type){
@@ -161,6 +227,11 @@ class Main extends React.Component
 							neuron.setStroke("white")
 						}
 					})
+					let selectNeurons = [...this.state.selectedNeurons]
+					selectNeurons.length = 0
+					this.setState(state => ({
+						selectedNeurons:selectNeurons
+					}))
 				}else{
 					let connections = this.stageRef.current.find(node => node.attrs.name ==="connection")
 					connections.forEach(connection => connection.stroke("#9CA3AF"))
@@ -178,8 +249,9 @@ class Main extends React.Component
 	}
 
 	onBoxMove(e){
+
 		if(this.state.isDragging){
-			var currentPos = this.stageRef.current.getPointerPosition()
+			let currentPos = this.stageRef.current.getPointerPosition()
 			var width = currentPos.x - this.state.selectorBoxX 
 			var height = currentPos.y - this.state.selectorBoxY
 			this.setState(state => ({
@@ -188,6 +260,12 @@ class Main extends React.Component
 			}))
 			this.highlightAndSelectNeuron(e)
 			this.connectionOnClick(e)
+		}else if(this.state.ctrlC){
+			let currentPos = this.stageRef.current.getPointerPosition()
+			this.setState(state => ({
+				copyNeuronX:currentPos.x,
+				copyNeuronY:currentPos.y
+			}))
 		}
 	}
 
@@ -373,6 +451,16 @@ class Main extends React.Component
 			this.setState( state => ({
 				isShiftSelecting: true
 			}))	
+		}else if(e.ctrlKey && e.key === "c"){
+			this.setState(state => ({
+				ctrlC:true,
+				copyNeuronX:this.stageRef.current.getPointerPosition().x,
+				copyNeuronY:this.stageRef.current.getPointerPosition().y
+			}))
+		}else if (e.key === "Escape"){
+			this.setState(state => ({
+				ctrlC:false
+			}))
 		}
 		
 		this.setState(state => ({
@@ -504,15 +592,20 @@ class Main extends React.Component
 		let selectorBox = this.state.isDragging?<Rect x={this.state.selectorBoxX} y={this.state.selectorBoxY}
 		height={this.state.dragBoxHeight} stroke="#D1D5DB" width={this.state.dragBoxWidth} />:null
 		let neuralLayers = this.state.nLayers.map((item, index) => <NeuralLayer offsetX={(index+1) * -350} offsetY={-100} type={item.type} 
-			addNeuron={this.addNeuron} neuronCount={item.neuronCount} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} layerId={index}/>)	
+			addNeuron={this.addNeuron} addCopiedNeurons={this.addCopiedNeurons} neuronCount={item.neuronCount} copied={this.state.ctrlC} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} layerId={index}/>)	
 		let fullyConnectButtons = this.state.nLayers.map((item, index) => {
 				if(item.type !== "output")
-					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection}/>}
+					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection}/>
+				else
+					return null
+				}
 			)
 		let connections = this.state.connections.map((item, index) => <Line stroke="#9CA3AF" x={item.x} y={item.y} points={item.points} strokeWidth={5.5} 
 			sourceId={item.sourceId} targetId={item.targetId} id={"connId: " + index} onClick={this.connectionOnClick} name="connection"
 			onMouseEnter={(e) => e.target.strokeWidth(10)} onMouseLeave={(e) => e.target.strokeWidth(5.5)} lineCap="round"/>)
-		let infoScreen = this.state.rightClickedNeuron !== ""&&this.state.rightClickedNeuronKeys !== undefined?<Layer><NeuronInfo selected={this.state.rightClickedNeuron} keys={this.state.rightClickedNeuronKeys} close={this.closeInfo}/></Layer>:null
+		let infoScreen = this.state.rightClickedNeuron !== "" && this.state.rightClickedNeuronKeys !== undefined?<Layer><NeuronInfo selected={this.state.rightClickedNeuron} 
+		keys={this.state.rightClickedNeuronKeys} close={this.closeInfo}/></Layer>:null
+		let copyNeuron = this.state.ctrlC && this.state.selectedNeurons.length > 0?<Layer><CopyNeuron X={this.state.copyNeuronX} Y={this.state.copyNeuronY} count={this.state.selectedNeurons.length}/></Layer>:null
 		return(
 			<Stage width={window.innerWidth} height={window.innerHeight} onMouseDown={this.onBoxDragStart} onMouseUp={this.onBoxDragEnd} ref={this.stageRef} onMouseMove={this.onBoxMove}>
 				<Layer draggable={!this.state.isDragging} onWheel={this.zoom} scaleX={this.state.layerScaleX} scaleY={this.state.layerScaleX}>
@@ -538,6 +631,7 @@ class Main extends React.Component
 					<AddMiddleLayer addMiddleLayer={this.addMiddleLayer}/>
 				</Layer>
 				{infoScreen}
+				{copyNeuron}
 			</Stage>
 			)
 	}
