@@ -13,7 +13,8 @@ class NeuronInfo extends React.Component{
 	render(){
 		let keys = this.props.keys.map((item, index) => <NeuronKeys index={index+1} text={item}/>)
 		return(
-			<Group offsetY={-window.innerHeight * 0.20} offsetX={-window.innerWidth * 0.40}>
+			<Group offsetY={-window.innerHeight * 0.20} offsetX={-window.innerWidth * 0.30}>
+				<Rect offsetX={575} y={-190} width={window.innerWidth} height={window.innerHeight} opacity={0.2} fill="black"/>
 				<Rect cornerRadius={20} width={650} height={550} fill="white" shadowBlur={50} shadowColor="grey" shadowOffsetY={5} shadowOffsetX={5}/>
 				<Text text="Neuron Info" fill="#475569" offsetY={-25} offsetX={-25} fontSize={25} fontStyle="bold" fontFamily="Helvetica"/>
 				<Text text={"Selected Neuron " + this.props.selected} fill="#64748B" offsetY={-50} offsetX={-25} fontSize={20} fontStyle="bold" fontFamily="Helvetica"/>

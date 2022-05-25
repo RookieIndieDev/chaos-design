@@ -615,7 +615,7 @@ class Main extends React.Component
 					<Text wrap="char" width={130} fill="white" listening={false} offsetX={-20} offsetY={-25}/>
 				</Group>
 					<Group>
-						<Rect width={window.innerWidth * 4} height={window.innerHeight * 4} x={0} y={0} cornerRadius={5} opacity={0.05} name="layer" fill="gray"/>
+						<Rect width={window.innerWidth * 2} height={window.innerHeight * 2} x={0} y={0} cornerRadius={5} opacity={0.05} name="layer" fill="gray"/>
 						{neuralLayers}
 						{fullyConnectButtons}
 						{connections}
