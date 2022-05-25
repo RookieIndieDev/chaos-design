@@ -3,7 +3,7 @@ import React from "react";
 
 class NeuronKeys extends React.Component{
 	constructor(props){
-		super();
+		super(props);
 		this.state = {
 			hovering:false
 		}
@@ -15,11 +15,13 @@ class NeuronKeys extends React.Component{
 		let pos = {}
 		pos.x = e.target.getClientRect().x
 		pos.y = e.target.getClientRect().y
-		//let tempNeurons = [...this.state.neurons]
+		let tempNeurons = this.props.currentNeurons
+		let tempNeuron = {}
+		let neuronId = this.props.selected.split(" ")[1]
 		var text = document.createElement('input');
 		text.type = "text"
 		document.body.appendChild(text);
-		text.placeholder = e.target.parent.children[1].text() +" (Press Enter to save)";
+		text.placeholder = e.target.parent.children[1].text() +" (Enter to save)";
 		text.style.position = 'absolute';
 		text.style.top = pos.y + 'px';
 		text.style.left = pos.x + 'px';
@@ -32,28 +34,24 @@ class NeuronKeys extends React.Component{
 
 		text.addEventListener("keydown", (e) =>{
 			if(e.keyCode === 13){
-				// this.setState( state => ({
-				// 	neurons:tempNeurons
-				// }))
-				// document.body.removeChild(text)
+				tempNeurons.forEach(neuron => {
+					if(neuron.id === neuronId){
+						neuron = tempNeuron
+					}
+				})
+				this.props.updateNeurons(tempNeurons)
+				document.body.removeChild(text)
 			}
 
 		})
 
 		text.addEventListener("keyup", (e) => {
-			// var tempNeuron = this.state.neurons.find(neuron => neuron.id === this.state.selectedNeuronId)
-			// if(isNaN(text.value)){
-			// 	tempNeuron[keyName] = text.value
-			// }else{
-			// 	tempNeuron[keyName] = parseFloat(text.value)
-			// }
-			
-
-			// tempNeurons.forEach(neuron => {
-			// 	if(neuron.id === this.state.selectedNeuronId){
-			// 		neuron = tempNeuron
-			// 	}
-			// })
+			tempNeuron = tempNeurons.find(neuron => neuron.id === neuronId)
+			if(isNaN(text.value)){
+				tempNeuron[keyName] = text.value
+			}else{
+				tempNeuron[keyName] = parseFloat(text.value)
+			}
 		})
 
 		text.addEventListener("blur", (e) => {

@@ -6,12 +6,25 @@ class NeuronInfo extends React.Component{
 		super();
 		this.state={
 			hoveringOverClose:false,
-			hoveringOverSave:false
+			hoveringOverSave:false,
+			currentNeurons:props.getCurrentNeurons()
 		}
+		this.Save = this.Save.bind(this)
+		this.updateNeurons = this.updateNeurons.bind(this)
+	}
+
+	updateNeurons(tempNeurons){
+		this.setState(state => ({
+			currentNeurons:tempNeurons
+		}))
+	}
+
+	Save(){
+		this.props.updateNeurons(this.state.currentNeurons)
 	}
 
 	render(){
-		let keys = this.props.keys.map((item, index) => <NeuronKeys index={index+1} text={item}/>)
+		let keys = this.props.keys.map((item, index) => <NeuronKeys index={index+1} text={item} currentNeurons={this.state.currentNeurons} updateNeurons={this.updateNeurons} selected={this.props.selected}/>)
 		return(
 			<Group offsetY={-window.innerHeight * 0.20} offsetX={-window.innerWidth * 0.30}>
 				<Rect offsetX={575} y={-190} width={window.innerWidth} height={window.innerHeight} opacity={0.2} fill="black"/>
@@ -25,6 +38,7 @@ class NeuronInfo extends React.Component{
 				<Rect fill={this.state.hoveringOverSave?"#22C55E":"#4ADE80"} width={200} height={50} cornerRadius={25} offsetX={-235} offsetY={-450} shadowOffsetY={4} shadowBlur={2} shadowColor="#CBD5E1"
 				onMouseEnter={() => this.setState(state => ({hoveringOverSave: true}))} 
 				onMouseLeave={() => this.setState(state => ({hoveringOverSave: false}))}
+				onClick={this.Save}
 				/>
 				<Text text="Save" listening={false} fill="white" offsetY={-465} offsetX={-310} fontSize={20} fontStyle="bold" fontFamily="Helvetica"/>
 			</Group>

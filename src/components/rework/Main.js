@@ -63,6 +63,8 @@ class Main extends React.Component
 		this.connectionOnClick = this.connectionOnClick.bind(this)
 		this.addCopiedNeurons = this.addCopiedNeurons.bind(this)
 		this.updateNeuralInfo = this.updateNeuralInfo.bind(this)
+		this.updateNeurons = this.updateNeurons.bind(this)
+		this.getCurrentNeurons = this.getCurrentNeurons.bind(this)
 		this.stageRef = React.createRef()
 		this.neuronRef = React.createRef()
 	}
@@ -166,6 +168,16 @@ class Main extends React.Component
 		}))
 		this.setState(state => ({
 			nLayers:allLayers
+		}))
+	}
+
+	getCurrentNeurons(){
+		return [...this.state.neurons]
+	}
+
+	updateNeurons(tempNeurons){
+		this.setState( state => ({
+			neurons:tempNeurons
 		}))
 	}
 
@@ -604,7 +616,7 @@ class Main extends React.Component
 			sourceId={item.sourceId} targetId={item.targetId} id={"connId: " + index} onClick={this.connectionOnClick} name="connection"
 			onMouseEnter={(e) => e.target.strokeWidth(10)} onMouseLeave={(e) => e.target.strokeWidth(5.5)} lineCap="round"/>)
 		let infoScreen = this.state.rightClickedNeuron !== "" && this.state.rightClickedNeuronKeys !== undefined?<Layer><NeuronInfo selected={this.state.rightClickedNeuron} 
-		keys={this.state.rightClickedNeuronKeys} close={this.closeInfo}/></Layer>:null
+		keys={this.state.rightClickedNeuronKeys} close={this.closeInfo} getCurrentNeurons={this.getCurrentNeurons} updateNeurons={this.updateNeurons}/></Layer>:null
 		let copyNeuron = this.state.ctrlC && this.state.selectedNeurons.length > 0?<Layer><CopyNeuron X={this.state.copyNeuronX} Y={this.state.copyNeuronY} count={this.state.selectedNeurons.length}/></Layer>:null
 		return(
 			<Stage width={window.innerWidth} height={window.innerHeight} onMouseDown={this.onBoxDragStart} onMouseUp={this.onBoxDragEnd} ref={this.stageRef} onMouseMove={this.onBoxMove}>
