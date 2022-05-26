@@ -21,7 +21,7 @@ class NeuronKeys extends React.Component{
 		var text = document.createElement('input');
 		text.type = "text"
 		document.body.appendChild(text);
-		text.placeholder = e.target.parent.children[1].text() +" (Enter to save)";
+		text.placeholder = e.target.parent.children[1].text() +" (Enter to update)";
 		text.style.position = 'absolute';
 		text.style.top = pos.y + 'px';
 		text.style.left = pos.x + 'px';

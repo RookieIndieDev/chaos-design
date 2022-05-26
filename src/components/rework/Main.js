@@ -3,7 +3,7 @@ import { Stage, Layer, Rect, Text, Group, Line } from 'react-konva';
 import React from "react";
 import SidePane from './Sidepane/SidePane.js'
 import NeuralLayer from './NeuralLayer/NeuralLayer.js'
-import Simmodel from '../../chaosnet/chaoscraftDiscoverySimmodel.json'
+import Simmodel from '../../chaosnet/simmodel.json'
 import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
 import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer.js'
 import NeuronInfo from './NeuronInfo/NeuronInfo.js'
@@ -178,7 +178,7 @@ class Main extends React.Component
 	updateNeurons(tempNeurons){
 		this.setState( state => ({
 			neurons:tempNeurons
-		}))
+		}), () => console.log(JSON.stringify(this.state.neurons)))
 	}
 
 	setNeuronColor(baseType){
@@ -353,7 +353,7 @@ class Main extends React.Component
 		if(e.code === "Delete"){
 			if(this.state.selectedConnections.length === 0){
 					this.setState(state => ({
-							totalNumberOfNeurons:state.totalNumberOfNeurons === selectNeurons.length?0:state.totalNumberOfNeurons
+							totalNumberOfNeurons:state.totalNumberOfNeurons === selectNeurons.length?0:state.totalNumberOfNeurons-selectNeurons.length
 					}))
 					allConnections.length = 0
 					this.setState(state => ({connections: allConnections}))
@@ -627,7 +627,7 @@ class Main extends React.Component
 					<Text wrap="char" width={130} fill="white" listening={false} offsetX={-20} offsetY={-25}/>
 				</Group>
 					<Group>
-						<Rect width={window.innerWidth * 2} height={window.innerHeight * 2} x={0} y={0} cornerRadius={5} opacity={0.05} name="layer" fill="gray"/>
+						<Rect width={window.innerWidth * 4} height={window.innerHeight * 4} x={0} y={0} cornerRadius={5} opacity={0.05} name="layer" fill="gray"/>
 						{neuralLayers}
 						{fullyConnectButtons}
 						{connections}
