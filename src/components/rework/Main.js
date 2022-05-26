@@ -8,6 +8,7 @@ import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
 import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer.js'
 import NeuronInfo from './NeuronInfo/NeuronInfo.js'
 import CopyNeuron from './CopyNeuron/CopyNeuron.js'
+import ExportButton from './ExportButton/ExportButton.js'
 
 class Main extends React.Component
 {
@@ -65,6 +66,7 @@ class Main extends React.Component
 		this.updateNeuralInfo = this.updateNeuralInfo.bind(this)
 		this.updateNeurons = this.updateNeurons.bind(this)
 		this.getCurrentNeurons = this.getCurrentNeurons.bind(this)
+		this.convertToJSON = this.convertToJSON.bind(this)
 		this.stageRef = React.createRef()
 		this.neuronRef = React.createRef()
 	}
@@ -73,6 +75,18 @@ class Main extends React.Component
 		this.setState( state => ({
 			currentAccordionItemType:e.target.parent.children[1].attrs.text
 		}))
+	}
+
+	convertToJSON(){
+		var output = {
+			neurons:this.state.neurons
+		}
+		const blob = new Blob([JSON.stringify(output)], {type:"application/json"})
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.download = 'NNet.json';
+		link.href = url;
+		link.click();
 	}
 
 	addNeuron(e){
@@ -618,6 +632,7 @@ class Main extends React.Component
 		let infoScreen = this.state.rightClickedNeuron !== "" && this.state.rightClickedNeuronKeys !== undefined?<Layer><NeuronInfo selected={this.state.rightClickedNeuron} 
 		keys={this.state.rightClickedNeuronKeys} close={this.closeInfo} getCurrentNeurons={this.getCurrentNeurons} updateNeurons={this.updateNeurons}/></Layer>:null
 		let copyNeuron = this.state.ctrlC && this.state.selectedNeurons.length > 0?<Layer><CopyNeuron X={this.state.copyNeuronX} Y={this.state.copyNeuronY} count={this.state.selectedNeurons.length}/></Layer>:null
+		let exportButton = this.state.totalNumberOfNeurons > 0?<ExportButton export={this.convertToJSON}/>:null
 		return(
 			<Stage width={window.innerWidth} height={window.innerHeight} onMouseDown={this.onBoxDragStart} onMouseUp={this.onBoxDragEnd} ref={this.stageRef} onMouseMove={this.onBoxMove}>
 				<Layer draggable={!this.state.isDragging} onWheel={this.zoom} scaleX={this.state.layerScaleX} scaleY={this.state.layerScaleX}>
@@ -641,6 +656,7 @@ class Main extends React.Component
 				</Layer>
 				<Layer>
 					<AddMiddleLayer addMiddleLayer={this.addMiddleLayer}/>
+					{exportButton}
 				</Layer>
 				{infoScreen}
 				{copyNeuron}
