@@ -542,23 +542,18 @@ class Main extends React.Component
 		container.addEventListener('keyup', this.onKeyUp)
 	}
 
-	fullyConnectLayers(dependencies, neurons){
+	fullyConnectLayers(dependencies){
 		let currentNeurons = [...this.state.neurons]
 		for(let i = 0; i < dependencies.length; i++){
-			for(let j = 0; j < neurons.length; j++){
-				for(let k = 0; k < currentNeurons.length; k++){
-					if(currentNeurons[k].id === neurons[j].neuronId && neurons[j] !== undefined){
-						if(currentNeurons[k].dependencies.find(dep => dep.neuronId === dependencies[i].neuronId) === undefined){
-							currentNeurons[k].dependencies.push(dependencies[i])
+				for(let j = 0; j < currentNeurons.length; j++){
+					if(currentNeurons[j].id === dependencies[i].targetId && currentNeurons[j].dependencies.find(dep => dep.neuronId === dependencies[i].neuronId) === undefined){
+							currentNeurons[j].dependencies.push(dependencies[i])
 						}
 					}
 				}
-
-			}
-		}
 		this.setState(state => ({neurons: currentNeurons}))
 	}
-
+		
 	makeConnection(dep, neuron){
 		this.setState(state => ({
 			layerScaleX:1
