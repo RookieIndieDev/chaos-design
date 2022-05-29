@@ -1,19 +1,36 @@
 import React from 'react'
+import { useLocation, Navigate } from 'react-router-dom'
+
+export function withRouter(Children){
+	return(props)=>{
+		const location = useLocation()
+		return <Children {...props} location={location} />
+	}
+}
 
 class SimmodelHandler extends React.Component{
-	constructor(){
-		super();
+	constructor(props){
+		super(props);
 		this.state={
-			simmodel:null,
-			text:"Upload Simmodel to begin."
+			simmodel:undefined,
+			text:"Upload Simmodel to begin.",
+			new:false
 		}
+	}
+
+	componentDidMount(){
+		document.title = "Simmodel Upload"
+		this.setState(state => ({
+			new: this.props.location.state.new
+		}))
 	}
 
 	render(){
 		let simmodel;
-
+		let nav = this.state.simmodel !== undefined?<Navigate to={this.props.location.state.new?"/editor":"/"} state ={{simmodel:this.state.simmodel}} replace={true} />:null
 		return(
 			<div className="w-full h-screen bg-indigo-700">
+				{nav}
 				<div>
 					<div className="py-44 px-5">
 						<p className="text-9xl font-semibold text-gray-100 ml-5 select-none text-left w-7/12">{this.state.text}</p>
@@ -29,8 +46,7 @@ class SimmodelHandler extends React.Component{
 														simmodel = JSON.parse(fileReader.result)
 														if(simmodel.inputNeurons && simmodel.activators && simmodel.outputNeurons){
 															this.setState(state => ({
-																simmodel:simmodel,
-																text:"Done."
+																simmodel:simmodel
 															}))
 														}
 														else{
@@ -54,4 +70,4 @@ class SimmodelHandler extends React.Component{
 	}
 }
 
-export default SimmodelHandler;
+export default withRouter(SimmodelHandler)

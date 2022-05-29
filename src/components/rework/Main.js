@@ -1,19 +1,26 @@
-import '../../index.css';
-import { Stage, Layer, Rect, Text, Group, Line } from 'react-konva';
+import '../../index.css'
+import { Stage, Layer, Rect, Text, Group, Line } from 'react-konva'
+import { useLocation } from 'react-router-dom'
 import React from "react";
-import SidePane from './Sidepane/SidePane.js'
-import NeuralLayer from './NeuralLayer/NeuralLayer.js'
-import Simmodel from '../../chaosnet/simmodel.json'
-import FullyConnectButton from './FullyConnectButton/FullyConnectButton.js'
-import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer.js'
-import NeuronInfo from './NeuronInfo/NeuronInfo.js'
-import CopyNeuron from './CopyNeuron/CopyNeuron.js'
-import ExportButton from './ExportButton/ExportButton.js'
+import SidePane from './Sidepane/SidePane'
+import NeuralLayer from './NeuralLayer/NeuralLayer'
+import FullyConnectButton from './FullyConnectButton/FullyConnectButton'
+import AddMiddleLayer from './AddMiddleLayer/AddMiddleLayer'
+import NeuronInfo from './NeuronInfo/NeuronInfo'
+import CopyNeuron from './CopyNeuron/CopyNeuron'
+import ExportButton from './ExportButton/ExportButton'
+
+export function withRouter(Children){
+	return(props)=>{
+		const location = useLocation()
+		return <Children {...props} location={location} />
+	}
+}
 
 class Main extends React.Component
 {
-	constructor(){
-		super();
+	constructor(props){
+		super(props);
 		this.state = {
 			layerScaleX:1,
 			layerHeight: 500,
@@ -45,7 +52,8 @@ class Main extends React.Component
 			connections:[],
 			rightClickedNeuron:"",
 			rightClickedNeuronKeys:[],
-			selectedConnections:[]
+			selectedConnections:[],
+			simmodel:{}
 		}
 		this.zoom = this.zoom.bind(this)
 		this.onBoxDragStart = this.onBoxDragStart.bind(this)
@@ -117,10 +125,10 @@ class Main extends React.Component
 		neuron.children[0].attrs.id = "neuron-"+this.state.totalNumberOfNeurons
 		switch(this.state.baseType){
 			case "input":
-				neuron.attrs.keys = Object.keys(Simmodel.inputNeurons.find(neuron => neuron.$TYPE === this.state.currentAccordionItemType)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+				neuron.attrs.keys = Object.keys(this.state.simmodel.inputNeurons.find(neuron => neuron.$TYPE === this.state.currentAccordionItemType)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
 				break;
 			case "output":
-				neuron.attrs.keys = Object.keys(Simmodel.outputNeurons.find(neuron => neuron.$TYPE === this.state.currentAccordionItemType)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+				neuron.attrs.keys = Object.keys(this.state.simmodel.outputNeurons.find(neuron => neuron.$TYPE === this.state.currentAccordionItemType)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
 				break;
 			default:
 				break;
@@ -155,10 +163,10 @@ class Main extends React.Component
 				neuron.children[0].attrs.id = "neuron-"+this.state.totalNumberOfNeurons
 				switch(select._base_type){
 					case "input":
-						neuron.attrs.keys = Object.keys(Simmodel.inputNeurons.find(neuron => neuron.$TYPE === select.$TYPE)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+						neuron.attrs.keys = Object.keys(this.state.simmodel.inputNeurons.find(neuron => neuron.$TYPE === select.$TYPE)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
 						break;
 					case "output":
-						neuron.attrs.keys = Object.keys(Simmodel.outputNeurons.find(neuron => neuron.$TYPE === select.$TYPE)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+						neuron.attrs.keys = Object.keys(this.state.simmodel.outputNeurons.find(neuron => neuron.$TYPE === select.$TYPE)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
 						break;
 					default:
 						break;
@@ -537,11 +545,14 @@ class Main extends React.Component
 	}
 
 	componentDidMount(){
+		let simmodel = this.props.location.state.simmodel
+		this.setState(state => ({simmodel}))
 		var container = this.stageRef.current.container()
 		container.tabIndex = 1;
 		container.focus()
 		container.addEventListener('keydown', this.handleKeyPress)
 		container.addEventListener('keyup', this.onKeyUp)
+		document.title="Editor"
 	}
 
 	fullyConnectLayers(dependencies){
@@ -609,8 +620,7 @@ class Main extends React.Component
 	}
 
 	render(){
-		//Need to implement Simmodel upload
-		let sidePane = <SidePane inputNeurons={Simmodel.inputNeurons} middleNeurons={Simmodel.activators} outputNeurons={Simmodel.outputNeurons} 
+		let sidePane = <SidePane inputNeurons={this.state.simmodel.inputNeurons} middleNeurons={this.state.simmodel.activators} outputNeurons={this.state.simmodel.outputNeurons} 
 		onAccordionItemSelect={this.onAccordionItemSelect} setBaseType={this.setBaseType} currentSelected={this.state.currentAccordionItemId}/>
 		let selectorBox = this.state.isDragging?<Rect x={this.state.selectorBoxX} y={this.state.selectorBoxY}
 		height={this.state.dragBoxHeight} stroke="#D1D5DB" width={this.state.dragBoxWidth} />:null
@@ -663,4 +673,4 @@ class Main extends React.Component
 	}
 }
 
-export default Main;
+export default withRouter(Main);
