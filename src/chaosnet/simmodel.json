@@ -106,12 +106,6 @@
       "direction": "Left"
     },
     {
-      "$TYPE": "Move",
-      "$DEFAULT": true,
-      "$OUTPUT_GROUP": "BASIC",
-      "direction": "Right"
-    },
-    {
       "$TYPE": "MineBlock",
       "$DEFAULT": false,
       "$OUTPUT_GROUP": "BASIC",

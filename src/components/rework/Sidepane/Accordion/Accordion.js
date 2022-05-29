@@ -21,7 +21,7 @@ class Accordion extends React.Component{
 	render(){
 		var children = this.props.selectedId===this.state.id?this.state.items.map((item, index)=>
 				<AccordionChild offsetY={-index * 65} text={item.$TYPE?item.$TYPE:item} onAccordionSelect={this.props.onAccordionSelect} 
-				type={this.props.text} currentSelected={this.props.currentSelected} key={index}/>
+				type={this.props.text} currentSelected={this.props.currentSelected} key={index} id={index.toString()} baseId={this.props.index.toString()}/>
 			):null
 		return(
 			<Group offsetY={this.props.offsetY}>

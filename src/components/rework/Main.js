@@ -25,6 +25,7 @@ class Main extends React.Component
 			neurons:[],
 			totalNumberOfNeurons:0,
 			currentAccordionItemType:"",
+			currentAccordionItemId:"",
 			baseType:"",
 			lastLayerId:2,
 			selectedNeurons:[],
@@ -71,9 +72,10 @@ class Main extends React.Component
 		this.neuronRef = React.createRef()
 	}
 
-	onAccordionItemSelect(e){
+	onAccordionItemSelect(e,id){
 		this.setState( state => ({
-			currentAccordionItemType:e.target.parent.children[1].attrs.text
+			currentAccordionItemType:e.target.parent.children[1].attrs.text,
+			currentAccordionItemId:id
 		}))
 	}
 
@@ -192,7 +194,7 @@ class Main extends React.Component
 	updateNeurons(tempNeurons){
 		this.setState( state => ({
 			neurons:tempNeurons
-		}), () => console.log(JSON.stringify(this.state.neurons)))
+		}))
 	}
 
 	setNeuronColor(baseType){
@@ -609,21 +611,22 @@ class Main extends React.Component
 	render(){
 		//Need to implement Simmodel upload
 		let sidePane = <SidePane inputNeurons={Simmodel.inputNeurons} middleNeurons={Simmodel.activators} outputNeurons={Simmodel.outputNeurons} 
-		onAccordionItemSelect={this.onAccordionItemSelect} setBaseType={this.setBaseType} currentSelected={this.state.currentAccordionItemType}/>
+		onAccordionItemSelect={this.onAccordionItemSelect} setBaseType={this.setBaseType} currentSelected={this.state.currentAccordionItemId}/>
 		let selectorBox = this.state.isDragging?<Rect x={this.state.selectorBoxX} y={this.state.selectorBoxY}
 		height={this.state.dragBoxHeight} stroke="#D1D5DB" width={this.state.dragBoxWidth} />:null
 		let neuralLayers = this.state.nLayers.map((item, index) => <NeuralLayer offsetX={(index+1) * -350} offsetY={-100} type={item.type} 
-			addNeuron={this.addNeuron} addCopiedNeurons={this.addCopiedNeurons} neuronCount={item.neuronCount} copied={this.state.ctrlC} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} layerId={index}/>)	
+			addNeuron={this.addNeuron} addCopiedNeurons={this.addCopiedNeurons} neuronCount={item.neuronCount} copied={this.state.ctrlC} currentSelected={this.state.currentAccordionItemType} baseType={this.state.baseType} 
+			layerId={index} key={index.toString()}/>)	
 		let fullyConnectButtons = this.state.nLayers.map((item, index) => {
 				if(item.type !== "output")
-					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection}/>
+					return <FullyConnectButton offsetX={-(610 + ((index) * 350))} sourceLayerIndex={index} targetLayerIndex={index+1} fullyConnectLayers={this.fullyConnectLayers} makeConnection={this.makeConnection} key={index.toString()}/>
 				else
 					return null
 				}
 			)
 		let connections = this.state.connections.map((item, index) => <Line stroke="#9CA3AF" x={item.x} y={item.y} points={item.points} strokeWidth={5.5} 
 			sourceId={item.sourceId} targetId={item.targetId} id={"connId: " + index} onClick={this.connectionOnClick} name="connection"
-			onMouseEnter={(e) => e.target.strokeWidth(10)} onMouseLeave={(e) => e.target.strokeWidth(5.5)} lineCap="round"/>)
+			onMouseEnter={(e) => e.target.strokeWidth(10)} onMouseLeave={(e) => e.target.strokeWidth(5.5)} lineCap="round" key={index.toString()}/>)
 		let infoScreen = this.state.rightClickedNeuron !== "" && this.state.rightClickedNeuronKeys !== undefined?<Layer><NeuronInfo selected={this.state.rightClickedNeuron} 
 		keys={this.state.rightClickedNeuronKeys} close={this.closeInfo} getCurrentNeurons={this.getCurrentNeurons} updateNeurons={this.updateNeurons}/></Layer>:null
 		let copyNeuron = this.state.ctrlC && this.state.selectedNeurons.length > 0?<Layer><CopyNeuron X={this.state.copyNeuronX} Y={this.state.copyNeuronY} count={this.state.selectedNeurons.length}/></Layer>:null

@@ -101,13 +101,13 @@ class SidePane extends React.Component{
 			<Group offsetX={-10} offsetY={this.state.contentOffsetY}>
 					<Accordion text="Inputs" offsetY={this.state.inputAccordionY} items={this.props.inputNeurons} 
 					id="input" selectedId={this.state.selectedId} selectItem={this.selectItem} onAccordionSelect={this.props.onAccordionItemSelect} 
-					currentSelected={this.props.currentSelected}/>
+					currentSelected={this.props.currentSelected} index={0}/>
 					<Accordion text="Middle" offsetY={this.state.middleAccordionY} items={this.props.middleNeurons} 
 					id="middle" selectedId={this.state.selectedId} selectItem={this.selectItem} onAccordionSelect={this.props.onAccordionItemSelect} 
-					currentSelected={this.props.currentSelected}/>
+					currentSelected={this.props.currentSelected} index={1}/>
 					<Accordion text="Outputs" offsetY={this.state.outputAccordionY} items={this.props.outputNeurons} 
 					id="output" selectedId={this.state.selectedId} selectItem={this.selectItem} onAccordionSelect={this.props.onAccordionItemSelect} 
-					currentSelected={this.props.currentSelected}/>
+					currentSelected={this.props.currentSelected} index={2}/>
 				</Group>:
 				<Group listening={false}>
 					<Rect height={20} width={25} stroke="white" offsetX={-10} offsetY={-10}/>
