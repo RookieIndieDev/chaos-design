@@ -76,6 +76,7 @@ class Main extends React.Component
 		this.updateNeurons = this.updateNeurons.bind(this)
 		this.getCurrentNeurons = this.getCurrentNeurons.bind(this)
 		this.convertToJSON = this.convertToJSON.bind(this)
+		this.initializeWithNNet = this.initializeWithNNet.bind(this)
 		this.stageRef = React.createRef()
 		this.neuronRef = React.createRef()
 	}
@@ -527,6 +528,7 @@ class Main extends React.Component
 
 	addMiddleLayer(){
 		let layers = [...this.state.nLayers]
+		let neurons = [...this.state.neurons]
 		layers.splice(layers.length - 1, 0, {
 			type:"middle",
 			neuronCount:0
@@ -535,7 +537,8 @@ class Main extends React.Component
 		})
 		this.setState(
 			state => ({
-				nLayers:layers
+				nLayers:layers,
+				neurons:neurons
 		}))
 		let outputGroup = this.stageRef.current.find(node => node.attrs.id === layers.length-1)[0]
 		let outputNeurons = this.stageRef.current.find(node => node.attrs.baseType === "outputneuron")
@@ -544,16 +547,6 @@ class Main extends React.Component
 		})
 	}
 
-	componentDidMount(){
-		let simmodel = this.props.location.state.simmodel
-		this.setState(state => ({simmodel}))
-		var container = this.stageRef.current.container()
-		container.tabIndex = 1;
-		container.focus()
-		container.addEventListener('keydown', this.handleKeyPress)
-		container.addEventListener('keyup', this.onKeyUp)
-		document.title="Editor"
-	}
 
 	fullyConnectLayers(dependencies){
 		let currentNeurons = [...this.state.neurons]
@@ -617,6 +610,110 @@ class Main extends React.Component
 		this.setState(state => ({
 			selectedConnections:connIds
 		}))
+	}
+
+	initializeWithNNet(nNet){
+			let layerCount = nNet[nNet.length-1].layerId
+			let neuronCounts = []
+			let allLayers = [...this.state.nLayers]
+			let connections = []
+			this.setState(state => ({
+				neurons:nNet,
+				totalNumberOfNeurons:nNet.length
+			}), () => {
+
+				this.state.neurons.forEach(neuron => {
+					if(neuronCounts[neuron.layerId] === undefined)
+						neuronCounts.push(1)
+					else
+						neuronCounts[neuron.layerId]++
+
+				})
+
+				for(let i = 0; i < layerCount-1; i++){
+					if(i !== 0 || i !== layerCount){
+						allLayers.splice(allLayers.length -1, 0, {
+							type:"middle",
+							neuronCount:neuronCounts[i]-1
+						})
+					}
+				}
+
+				this.setState(state => ({
+					nLayers:allLayers
+				}), () => {
+					allLayers.forEach((item, index, layers) => {
+						let layerNeurons = []
+						item.id = index;
+						this.state.neurons.forEach(neuron => {
+							if(item.id === neuron.layerId){
+								layerNeurons.push(neuron)
+								let neuralLayer = this.stageRef.current.find(node => node.attrs.id === neuron.layerId)[0]
+								item.neuronCount += 1
+								var y = item.neuronCount !== 1?-(layerNeurons.indexOf(neuron) * 60):-5
+								let color = this.setNeuronColor(neuron._base_type)
+								let neuronClone = this.neuronRef.current.clone({opacity:1, offsetX:-40, offsetY:y})
+								neuronClone.children[0].attrs.fill = color
+								neuronClone.attrs.baseType = neuron._base_type+"neuron"
+								neuronClone.children[0].on('click', this.clickOnNeuron)
+								neuronClone.children[0].on('contextmenu', this.onNeuronRightClick)
+								neuronClone.children[1].text(neuron.$TYPE)
+								neuronClone.children[2].text("id: " +  neuron.id)
+								neuronClone.children[0].attrs.id = neuron.id
+								switch(neuron._base_type){
+									case "input":
+										neuronClone.attrs.keys = Object.keys(this.state.simmodel.inputNeurons.find(sim => sim.$TYPE === neuron.$TYPE)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+										break;
+									case "output":
+										neuronClone.attrs.keys = Object.keys(this.state.simmodel.outputNeurons.find(sim => sim.$TYPE === neuron.$TYPE)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
+										break;
+									default:
+										break;
+								}
+								neuralLayer.add(neuronClone)
+							}
+						})
+					})
+					this.setState( state => ({
+						nLayers:allLayers
+					}))
+					this.state.neurons.forEach(neuron => {
+						if(neuron._base_type !== "input"){
+							let target = this.stageRef.current.find(node => node.hasName("neuron") && node.attrs.id === neuron.id)[0]
+							neuron.dependencies.forEach(dep => {
+								var depRect = this.stageRef.current.find(node => node.attrs.id === dep.neuronId)[0].getClientRect()
+								var targetRect = target.getClientRect()
+								let X = depRect.x - targetRect.x
+								let Y = depRect.y - targetRect.y
+								let connection = {
+									x:depRect.x,
+									y:depRect.y+depRect.height/2,
+									points:[125, 0, -X, -Y],
+									sourceId:dep.neuronId,
+									targetId:neuron.id
+								}
+								connections.push(connection)
+								this.setState(state => ({
+									connections:connections
+								}))
+							})
+						}
+					})
+				})
+			})
+	}
+
+	componentDidMount(){
+		let simmodel = this.props.location.state.simmodel
+		if(this.props.location.state.nNet)
+			this.initializeWithNNet(this.props.location.state.nNet.neurons)
+		this.setState(state => ({simmodel:simmodel}))
+		var container = this.stageRef.current.container()
+		container.tabIndex = 1;
+		container.focus()
+		container.addEventListener('keydown', this.handleKeyPress)
+		container.addEventListener('keyup', this.onKeyUp)
+		document.title="Editor"
 	}
 
 	render(){
