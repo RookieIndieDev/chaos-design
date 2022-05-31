@@ -613,15 +613,14 @@ class Main extends React.Component
 	}
 
 	initializeWithNNet(nNet){
-			let layerCount = nNet[nNet.length-1].layerId
 			let neuronCounts = []
 			let allLayers = [...this.state.nLayers]
 			let connections = []
+			let currNeuron = {}
 			this.setState(state => ({
 				neurons:nNet,
 				totalNumberOfNeurons:nNet.length
 			}), () => {
-
 				this.state.neurons.forEach(neuron => {
 					if(neuronCounts[neuron.layerId] === undefined)
 						neuronCounts.push(1)
@@ -630,14 +629,14 @@ class Main extends React.Component
 
 				})
 
-				for(let i = 0; i < layerCount-1; i++){
-					if(i !== 0 || i !== layerCount){
-						allLayers.splice(allLayers.length -1, 0, {
+				neuronCounts.forEach((count, index) => {
+					if(index !== 0 && index !== neuronCounts.length-1){
+						allLayers.splice(allLayers.length - 1, 0, {
 							type:"middle",
-							neuronCount:neuronCounts[i]-1
+							neuronCount:count
 						})
 					}
-				}
+				})
 
 				this.setState(state => ({
 					nLayers:allLayers
@@ -649,7 +648,10 @@ class Main extends React.Component
 							if(item.id === neuron.layerId){
 								layerNeurons.push(neuron)
 								let neuralLayer = this.stageRef.current.find(node => node.attrs.id === neuron.layerId)[0]
-								item.neuronCount += 1
+
+								if(item.type !== "middle"){
+									item.neuronCount += 1
+								}
 								var y = item.neuronCount !== 1?-(layerNeurons.indexOf(neuron) * 60):-5
 								let color = this.setNeuronColor(neuron._base_type)
 								let neuronClone = this.neuronRef.current.clone({opacity:1, offsetX:-40, offsetY:y})
@@ -677,28 +679,35 @@ class Main extends React.Component
 					this.setState( state => ({
 						nLayers:allLayers
 					}))
-					this.state.neurons.forEach(neuron => {
-						if(neuron._base_type !== "input"){
-							let target = this.stageRef.current.find(node => node.hasName("neuron") && node.attrs.id === neuron.id)[0]
-							neuron.dependencies.forEach(dep => {
-								var depRect = this.stageRef.current.find(node => node.attrs.id === dep.neuronId)[0].getClientRect()
-								var targetRect = target.getClientRect()
-								let X = depRect.x - targetRect.x
-								let Y = depRect.y - targetRect.y
-								let connection = {
-									x:depRect.x,
-									y:depRect.y+depRect.height/2,
-									points:[125, 0, -X, -Y],
-									sourceId:dep.neuronId,
-									targetId:neuron.id
-								}
-								connections.push(connection)
-								this.setState(state => ({
-									connections:connections
-								}))
-							})
-						}
-					})
+					try{
+						this.state.neurons.forEach(neuron => {
+							if(neuron._base_type !== "input"){
+								currNeuron = neuron
+								let target = this.stageRef.current.find(node => node.hasName("neuron") && node.attrs.id === neuron.id)[0]
+								neuron.dependencies.forEach(dep => {
+									var depRect = this.stageRef.current.find(node => node.attrs.id === dep.neuronId)[0].getClientRect()
+									var targetRect = target.getClientRect()
+									let X = depRect.x - targetRect.x
+									let Y = depRect.y - targetRect.y
+									let connection = {
+										x:depRect.x,
+										y:depRect.y+depRect.height/2,
+										points:[125, 0, -X, -Y],
+										sourceId:dep.neuronId,
+										targetId:neuron.id
+									}
+									connections.push(connection)
+									this.setState(state => ({
+										connections:connections
+									}))
+								})
+							}
+						})
+					}
+					catch(error){
+						console.log(error)
+						console.log(currNeuron)
+					}
 				})
 			})
 	}
