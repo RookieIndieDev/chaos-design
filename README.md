@@ -16,7 +16,7 @@ ChaosDesign uses the following dependencies:
 * Install the dependencies following the instruction mentioned in the above links
 * Run `npm start` in your powershell or equivalent and load up `localhost:3000` in your web browser and you're good to go!
 
-**Hardware Accleration recommended**
+**Hardware Acceleration recommended**
 
 ---
 
