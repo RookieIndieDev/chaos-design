@@ -1,5 +1,5 @@
 import React from 'react'
-import CodeImage from '../../../code.png'
+import CodeImage from '../../code.png'
 import { Link } from "react-router-dom"
 
 class LandingPage extends React.Component{

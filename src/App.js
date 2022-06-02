@@ -1,9 +1,9 @@
 import './App.css';
 import './index.css';
 import { Routes, Route } from "react-router-dom";
-import Main from './components/rework/Main'
-import LandingPage from './components/rework/LandingPage/LandingPage'
-import Simmodel from './components/rework/SimmodelHandler/SimmodelHandler'
+import Main from './components/Main'
+import LandingPage from './components/LandingPage/LandingPage'
+import Simmodel from './components/SimmodelHandler/SimmodelHandler'
 
 function App() {
   return (

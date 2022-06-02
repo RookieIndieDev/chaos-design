@@ -1,4 +1,4 @@
-import '../../index.css'
+import '../index.css'
 import { Stage, Layer, Rect, Text, Group, Line } from 'react-konva'
 import { useLocation } from 'react-router-dom'
 import React from "react";
