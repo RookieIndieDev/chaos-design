@@ -16,6 +16,10 @@ ChaosDesign uses the following dependencies:
 * Install the dependencies following the instruction mentioned in the above links
 * Run `npm start` in your powershell or equivalent and load up `localhost:3000` in your web browser and you're good to go!
 
+Take a look at `src/chaosnet` for example simmodels.
+
+**Hardware Acceleration recommended**
+
 ---
 
 
