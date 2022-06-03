@@ -123,7 +123,7 @@ class Main extends React.Component
 		neuron.children[0].on('contextmenu', this.onNeuronRightClick)
 		neuron.children[1].text(this.state.currentAccordionItemType)
 		neuron.children[2].text("id: neuron-"+this.state.totalNumberOfNeurons)
-		neuron.children[0].attrs.id = "neuron-"+this.state.totalNumberOfNeurons
+		neuron.children[0].attrs.id = "neuron-"+this.state.totalNumberOfNeurons	
 		switch(this.state.baseType){
 			case "input":
 				neuron.attrs.keys = Object.keys(this.state.simmodel.inputNeurons.find(neuron => neuron.$TYPE === this.state.currentAccordionItemType)).filter(key => key !== "$TYPE" && key !== "$DEFAULT")
@@ -425,7 +425,7 @@ class Main extends React.Component
 							if(item.attrs.name !== "neuralLayer"){
 								let dependency = {}
 								dependency.neuronId = item.children[2].attrs.text.split(": ")[1]
-								dependency.weight = Math.random() * (10) - 5 
+								dependency.weight = Math.random()
 								dependencies.push(dependency)
 							}
 						})
@@ -619,7 +619,7 @@ class Main extends React.Component
 			let currNeuron = {}
 			this.setState(state => ({
 				neurons:nNet,
-				totalNumberOfNeurons:nNet.length
+				totalNumberOfNeurons:nNet.length+1
 			}), () => {
 				this.state.neurons.forEach(neuron => {
 					if(neuronCounts[neuron.layerId] === undefined)

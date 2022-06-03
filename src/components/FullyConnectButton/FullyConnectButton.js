@@ -29,7 +29,7 @@ class FullyConnectButton extends React.Component
 					if(neuron.attrs.name !== "neuralLayer"){
 						let dependency = {}
 						dependency.neuronId = item.children[2].attrs.text.split(": ")[1]
-						dependency.weight = (Math.random() * 10) - 5
+						dependency.weight = Math.random()
 						dependency.targetId = neuron.children[2].attrs.text.split(": ")[1]
 						dependencies.push(dependency)
 					}		
