@@ -20,6 +20,7 @@ class NeuronKeys extends React.Component{
 		let neuronId = this.props.selected.split(" ")[1]
 		var text = document.createElement('input');
 		text.type = "text"
+		text.value = this.props.currentNeurons.find(neuron => neuron.id === neuronId)[keyName]  
 		document.body.appendChild(text);
 		text.placeholder = e.target.parent.children[1].text() +" (Enter to update)";
 		text.style.position = 'absolute';
