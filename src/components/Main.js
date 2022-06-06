@@ -425,7 +425,7 @@ class Main extends React.Component
 							if(item.attrs.name !== "neuralLayer"){
 								let dependency = {}
 								dependency.neuronId = item.children[2].attrs.text.split(": ")[1]
-								dependency.weight = Math.random()
+								dependency.weight = this.Gaussian()
 								dependencies.push(dependency)
 							}
 						})
@@ -723,6 +723,12 @@ class Main extends React.Component
 		container.addEventListener('keydown', this.handleKeyPress)
 		container.addEventListener('keyup', this.onKeyUp)
 		document.title="Editor"
+	}
+
+	Gaussian(){
+		var u1 = 1.0 - Math.random()
+    	var u2 = 1.0 - Math.random
+        return Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
 	}
 
 	render(){
