@@ -89,8 +89,10 @@ class Main extends React.Component
 	}
 
 	convertToJSON(){
+		let neurons = [...this.state.neurons]
+		neurons.sort((neuronPrev, neuronNext) => neuronPrev.layerId - neuronNext.layerId)
 		var output = {
-			neurons:this.state.neurons
+			neurons:neurons
 		}
 		const blob = new Blob([JSON.stringify(output)], {type:"application/json"})
 		const url = URL.createObjectURL(blob);
@@ -535,6 +537,11 @@ class Main extends React.Component
 		})
 		layers.forEach((item, index) => {item.id = index
 		})
+		neurons.forEach(neuron => {
+			if(neuron._base_type === "output"){
+				neuron.layerId++
+			}
+		})
 		this.setState(
 			state => ({
 				nLayers:layers,
@@ -619,14 +626,14 @@ class Main extends React.Component
 			let currNeuron = {}
 			this.setState(state => ({
 				neurons:nNet,
-				totalNumberOfNeurons:nNet.length+1
+				totalNumberOfNeurons:nNet.length
 			}), () => {
 				this.state.neurons.forEach(neuron => {
-					if(neuronCounts[neuron.layerId] === undefined)
+					if(neuronCounts[neuron.layerId] === undefined){
 						neuronCounts.push(1)
+					}
 					else
 						neuronCounts[neuron.layerId]++
-
 				})
 
 				neuronCounts.forEach((count, index) => {
@@ -637,7 +644,6 @@ class Main extends React.Component
 						})
 					}
 				})
-
 				this.setState(state => ({
 					nLayers:allLayers
 				}), () => {
